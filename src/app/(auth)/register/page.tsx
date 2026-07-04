@@ -7,7 +7,7 @@ import { SignUpForm } from "@/components/auth/sign-up-form";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Register - DSA Tracker",
+  title: "Register - Study Tracker",
 };
 
 export default async function RegisterPage() {
@@ -16,7 +16,7 @@ export default async function RegisterPage() {
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">DSA Tracker</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Study Tracker</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Create your account and start tracking your progress.
         </p>

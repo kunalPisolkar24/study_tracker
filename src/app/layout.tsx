@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DSA Tracker",
-  description: "Track your Data Structures and Algorithms practice progress",
+  title: "Study Tracker",
+  description: "Track your study progress across topics",
   icons: "/circle-check-big.svg",
 };
 

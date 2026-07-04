@@ -93,7 +93,7 @@ export function TopicsPageClient() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Topics</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Browse and manage your DSA topics here.
+            Browse and manage your topics here.
           </p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)}>
@@ -128,7 +128,7 @@ export function TopicsPageClient() {
           <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
             <p className="text-lg font-medium">No topics yet</p>
             <p className="text-sm text-muted-foreground">
-              Create your first topic to start tracking your DSA progress.
+              Create your first topic to start tracking your progress.
             </p>
             <Button
               variant="outline"

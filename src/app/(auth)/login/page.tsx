@@ -7,7 +7,7 @@ import { SignInForm } from "@/components/auth/sign-in-form";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Sign in - DSA Tracker",
+  title: "Sign in - Study Tracker",
 };
 
 export default async function LoginPage() {
@@ -16,7 +16,7 @@ export default async function LoginPage() {
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">DSA Tracker</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Study Tracker</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Welcome back! Sign in to continue.
         </p>
