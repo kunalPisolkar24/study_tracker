@@ -1,9 +1,10 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Add01Icon } from "@hugeicons/core-free-icons";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -97,7 +98,7 @@ export function TopicsPageClient() {
           </p>
         </div>
         <Button onClick={() => setIsCreateOpen(true)}>
-          <Plus />
+          <HugeiconsIcon icon={Add01Icon} />
           Create
         </Button>
       </div>
@@ -135,7 +136,7 @@ export function TopicsPageClient() {
               size="sm"
               onClick={() => setIsCreateOpen(true)}
             >
-              <Plus />
+              <HugeiconsIcon icon={Add01Icon} />
               Create your first topic
             </Button>
           </div>

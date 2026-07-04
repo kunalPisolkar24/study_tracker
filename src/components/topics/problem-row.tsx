@@ -1,9 +1,10 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon, ArrowUp01Icon, Delete02Icon, LinkSquare01Icon, PencilIcon, StickyNote01Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUp, ArrowDown, ExternalLink, Pencil, Trash2, StickyNote } from "lucide-react";
 import { STATUS_CYCLE, STATUS_STYLES, DIFFICULTY_STYLES } from "@/lib/constants";
 import type { ProblemStoreItem } from "@/types/topics";
 import { cn } from "@/lib/utils";
@@ -55,7 +56,7 @@ export function ProblemRow({
             onClick={() => onMoveUp(problem.id)}
             aria-label="Move up"
           >
-            <ArrowUp className="size-3" />
+            <HugeiconsIcon icon={ArrowUp01Icon} className="size-3" />
           </Button>
           <Button
             variant="ghost"
@@ -64,7 +65,7 @@ export function ProblemRow({
             onClick={() => onMoveDown(problem.id)}
             aria-label="Move down"
           >
-            <ArrowDown className="size-3" />
+            <HugeiconsIcon icon={ArrowDown01Icon} className="size-3" />
           </Button>
         </div>
       )}
@@ -78,7 +79,7 @@ export function ProblemRow({
             className="whitespace-nowrap font-medium underline-offset-2 hover:underline"
           >
             {problem.title}
-            <ExternalLink className="ml-1 inline size-3 text-muted-foreground" />
+            <HugeiconsIcon icon={LinkSquare01Icon} className="ml-1 inline size-3 text-muted-foreground" />
           </a>
         ) : (
           <span className="whitespace-nowrap font-medium">{problem.title}</span>
@@ -106,7 +107,7 @@ export function ProblemRow({
         aria-label="View notes"
         className={cn(!problem.notes && "opacity-30")}
       >
-        <StickyNote className="size-3" />
+        <HugeiconsIcon icon={StickyNote01Icon} className="size-3" />
       </Button>
 
       {isInReview ? (
@@ -135,7 +136,7 @@ export function ProblemRow({
             onClick={() => onEdit(problem)}
             aria-label="Edit problem"
           >
-            <Pencil className="size-3" />
+            <HugeiconsIcon icon={PencilIcon} className="size-3" />
           </Button>
           <Button
             variant="ghost"
@@ -143,7 +144,7 @@ export function ProblemRow({
             onClick={() => onDelete(problem)}
             aria-label="Delete problem"
           >
-            <Trash2 className="size-3" />
+            <HugeiconsIcon icon={Delete02Icon} className="size-3" />
           </Button>
         </div>
       )}

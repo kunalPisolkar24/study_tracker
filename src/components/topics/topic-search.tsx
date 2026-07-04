@@ -1,7 +1,8 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
 
 interface TopicSearchProps {
   value: string;
@@ -11,7 +12,7 @@ interface TopicSearchProps {
 export function TopicSearch({ value, onChange }: TopicSearchProps) {
   return (
     <div className="relative">
-      <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <HugeiconsIcon icon={Search01Icon} className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -24,7 +25,7 @@ export function TopicSearch({ value, onChange }: TopicSearchProps) {
           className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           aria-label="Clear search"
         >
-          <X className="size-4" />
+          <HugeiconsIcon icon={Cancel01Icon} className="size-4" />
         </button>
       )}
     </div>
