@@ -1,0 +1,245 @@
+import type { TopicStoreItem } from "@/types/topics";
+
+export const seedTopics: TopicStoreItem[] = [
+  {
+    id: "seed-array-hashing",
+    name: "Arrays & Hashing",
+    description: "Fundamentals of contiguous memory, hashing techniques, and key-value mappings.",
+    subtopics: [
+      {
+        id: "seed-prefix-sum",
+        name: "Prefix Sum",
+        description: "Cumulative sum techniques for range queries and subarray sums.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-ps-1", title: "Range Sum Query - Immutable", url: "https://leetcode.com/problems/range-sum-query-immutable/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-29T09:15:00Z" },
+          { id: "sp-ps-2", title: "Contiguous Array", url: "https://leetcode.com/problems/contiguous-array/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-27T14:30:00Z" },
+          { id: "sp-ps-3", title: "Subarray Sum Equals K", url: "https://leetcode.com/problems/subarray-sum-equals-k/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 2, sortOrder: 0 },
+          { id: "sp-ps-4", title: "Product of Array Except Self", url: "https://leetcode.com/problems/product-of-array-except-self/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-sliding-window",
+        name: "Sliding Window",
+        description: "Fixed and variable window patterns for subarray and substring problems.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-sw-1", title: "Maximum Average Subarray I", url: "https://leetcode.com/problems/maximum-average-subarray-i/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-25T11:00:00Z" },
+          { id: "sp-sw-2", title: "Longest Substring Without Repeating Characters", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-22T16:45:00Z" },
+          { id: "sp-sw-3", title: "Longest Repeating Character Replacement", url: "https://leetcode.com/problems/longest-repeating-character-replacement/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 1, sortOrder: 0 },
+          { id: "sp-sw-4", title: "Minimum Window Substring", url: "https://leetcode.com/problems/minimum-window-substring/", difficulty: "HARD", status: "TODO", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-sw-5", title: "Sliding Window Maximum", url: "https://leetcode.com/problems/sliding-window-maximum/", difficulty: "HARD", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+    ],
+    problems: [
+      { id: "sp-d-1", title: "Two Sum", url: "https://leetcode.com/problems/two-sum/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-30T08:00:00Z" },
+      { id: "sp-d-2", title: "Contains Duplicate", url: "https://leetcode.com/problems/contains-duplicate/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-28T10:30:00Z" },
+      { id: "sp-d-3", title: "Valid Anagram", url: "https://leetcode.com/problems/valid-anagram/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-26T12:00:00Z" },
+      { id: "sp-d-4", title: "Group Anagrams", url: "https://leetcode.com/problems/group-anagrams/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-d-5", title: "Top K Frequent Elements", url: "https://leetcode.com/problems/top-k-frequent-elements/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-d-6", title: "Encode and Decode Strings", url: "", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+    ],
+  },
+  {
+    id: "seed-two-pointers",
+    name: "Two Pointers",
+    description: "Techniques using two pointers to optimize array and string traversals.",
+    subtopics: [
+      {
+        id: "seed-interval",
+        name: "Interval Problems",
+        description: "Merging, inserting, and intersecting intervals.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-tp-int-1", title: "Merge Intervals", url: "https://leetcode.com/problems/merge-intervals/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-20T09:00:00Z" },
+          { id: "sp-tp-int-2", title: "Insert Interval", url: "https://leetcode.com/problems/insert-interval/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-18T15:20:00Z" },
+          { id: "sp-tp-int-3", title: "Non-overlapping Intervals", url: "https://leetcode.com/problems/non-overlapping-intervals/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 1, sortOrder: 0 },
+          { id: "sp-tp-int-4", title: "Meeting Rooms II", url: "https://leetcode.com/problems/meeting-rooms-ii/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-tp-int-5", title: "Minimum Interval to Include Each Query", url: "https://leetcode.com/problems/minimum-interval-to-include-each-query/", difficulty: "HARD", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-fast-slow",
+        name: "Fast & Slow Pointers",
+        description: "Cycle detection and middle element finding using two-speed pointers.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-tp-fs-1", title: "Linked List Cycle", url: "https://leetcode.com/problems/linked-list-cycle/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-15T10:00:00Z" },
+          { id: "sp-tp-fs-2", title: "Happy Number", url: "https://leetcode.com/problems/happy-number/", difficulty: "EASY", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-tp-fs-3", title: "Find the Duplicate Number", url: "https://leetcode.com/problems/find-the-duplicate-number/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+    ],
+    problems: [
+      { id: "sp-tp-d-1", title: "3Sum", url: "https://leetcode.com/problems/3sum/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-tp-d-2", title: "Container With Most Water", url: "https://leetcode.com/problems/container-with-most-water/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-tp-d-3", title: "Trapping Rain Water", url: "https://leetcode.com/problems/trapping-rain-water/", difficulty: "HARD", status: "MARKED_FOR_REVIEW", reviewCount: 3, sortOrder: 0 },
+      { id: "sp-tp-d-4", title: "Valid Palindrome", url: "https://leetcode.com/problems/valid-palindrome/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-12T08:30:00Z" },
+      { id: "sp-tp-d-5", title: "Two Sum II - Input Array Is Sorted", url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-10T17:00:00Z" },
+    ],
+  },
+  {
+    id: "seed-stack-queue",
+    name: "Stack & Queue",
+    description: "LIFO and FIFO data structures for expression evaluation and state tracking.",
+    subtopics: [
+      {
+        id: "seed-monotonic-stack",
+        name: "Monotonic Stack",
+        description: "Maintaining increasing or decreasing stack order for nearest element problems.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-sq-ms-1", title: "Daily Temperatures", url: "https://leetcode.com/problems/daily-temperatures/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-08T11:00:00Z" },
+          { id: "sp-sq-ms-2", title: "Next Greater Element I", url: "https://leetcode.com/problems/next-greater-element-i/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-05T14:00:00Z" },
+          { id: "sp-sq-ms-3", title: "Next Greater Element II", url: "https://leetcode.com/problems/next-greater-element-ii/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-sq-ms-4", title: "Largest Rectangle in Histogram", url: "https://leetcode.com/problems/largest-rectangle-in-histogram/", difficulty: "HARD", status: "MARKED_FOR_REVIEW", reviewCount: 2, sortOrder: 0 },
+          { id: "sp-sq-ms-5", title: "Maximal Rectangle", url: "https://leetcode.com/problems/maximal-rectangle/", difficulty: "HARD", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+    ],
+    problems: [
+      { id: "sp-sq-d-1", title: "Valid Parentheses", url: "https://leetcode.com/problems/valid-parentheses/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-03T09:30:00Z" },
+      { id: "sp-sq-d-2", title: "Min Stack", url: "https://leetcode.com/problems/min-stack/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-06-01T16:00:00Z" },
+      { id: "sp-sq-d-3", title: "Evaluate Reverse Polish Notation", url: "https://leetcode.com/problems/evaluate-reverse-polish-notation/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-sq-d-4", title: "Implement Queue using Stacks", url: "https://leetcode.com/problems/implement-queue-using-stacks/", difficulty: "EASY", status: "TODO", reviewCount: 0, sortOrder: 0 },
+    ],
+  },
+  {
+    id: "seed-linked-lists",
+    name: "Linked Lists",
+    description: "Linear data structures with node-based memory allocation and pointer manipulation.",
+    subtopics: [
+      {
+        id: "seed-ll-reversal",
+        name: "Linked List Reversal",
+        description: "Techniques for reversing linked lists and sublists.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-ll-rv-1", title: "Reverse Linked List", url: "https://leetcode.com/problems/reverse-linked-list/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-29T10:00:00Z" },
+          { id: "sp-ll-rv-2", title: "Reverse Linked List II", url: "https://leetcode.com/problems/reverse-linked-list-ii/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-26T13:00:00Z" },
+          { id: "sp-ll-rv-3", title: "Swap Nodes in Pairs", url: "https://leetcode.com/problems/swap-nodes-in-pairs/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-ll-rv-4", title: "Reverse Nodes in k-Group", url: "https://leetcode.com/problems/reverse-nodes-in-k-group/", difficulty: "HARD", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-ll-fast-slow",
+        name: "Fast & Slow (LL)",
+        description: "Cycle detection, middle finding, and intersection in linked lists.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-ll-fl-1", title: "Middle of the Linked List", url: "https://leetcode.com/problems/middle-of-the-linked-list/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-23T11:00:00Z" },
+          { id: "sp-ll-fl-2", title: "Linked List Cycle II", url: "https://leetcode.com/problems/linked-list-cycle-ii/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 1, sortOrder: 0 },
+          { id: "sp-ll-fl-3", title: "Intersection of Two Linked Lists", url: "https://leetcode.com/problems/intersection-of-two-linked-lists/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-20T15:00:00Z" },
+        ],
+      },
+    ],
+    problems: [
+      { id: "sp-ll-d-1", title: "Merge Two Sorted Lists", url: "https://leetcode.com/problems/merge-two-sorted-lists/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-17T09:00:00Z" },
+      { id: "sp-ll-d-2", title: "Add Two Numbers", url: "https://leetcode.com/problems/add-two-numbers/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-14T14:00:00Z" },
+      { id: "sp-ll-d-3", title: "LRU Cache", url: "https://leetcode.com/problems/lru-cache/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 3, sortOrder: 0 },
+      { id: "sp-ll-d-4", title: "Copy List with Random Pointer", url: "https://leetcode.com/problems/copy-list-with-random-pointer/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-ll-d-5", title: "Remove Nth Node From End of List", url: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+    ],
+  },
+  {
+    id: "seed-trees",
+    name: "Trees",
+    description: "Hierarchical data structures with recursive traversal and binary search properties.",
+    subtopics: [
+      {
+        id: "seed-bst",
+        name: "Binary Search Trees",
+        description: "BST properties, validation, and search operations.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-tr-bst-1", title: "Validate Binary Search Tree", url: "https://leetcode.com/problems/validate-binary-search-tree/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-11T10:00:00Z" },
+          { id: "sp-tr-bst-2", title: "Lowest Common Ancestor of a BST", url: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-08T12:00:00Z" },
+          { id: "sp-tr-bst-3", title: "Kth Smallest Element in a BST", url: "https://leetcode.com/problems/kth-smallest-element-in-a-bst/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-tr-bst-4", title: "Serialize and Deserialize BST", url: "https://leetcode.com/problems/serialize-and-deserialize-bst/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-tr-bst-5", title: "Recover Binary Search Tree", url: "https://leetcode.com/problems/recover-binary-search-tree/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 1, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-traversals",
+        name: "Tree Traversals",
+        description: "In-order, pre-order, post-order, and level-order traversal techniques.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-tr-tv-1", title: "Binary Tree Inorder Traversal", url: "https://leetcode.com/problems/binary-tree-inorder-traversal/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-05T16:00:00Z" },
+          { id: "sp-tr-tv-2", title: "Binary Tree Level Order Traversal", url: "https://leetcode.com/problems/binary-tree-level-order-traversal/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-05-02T09:00:00Z" },
+          { id: "sp-tr-tv-3", title: "Binary Tree Zigzag Level Order Traversal", url: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-tr-tv-4", title: "Construct Binary Tree from Preorder and Inorder Traversal", url: "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-bfs-dfs",
+        name: "BFS & DFS",
+        description: "Breadth-first and depth-first search on trees for path and property problems.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-tr-bd-1", title: "Maximum Depth of Binary Tree", url: "https://leetcode.com/problems/maximum-depth-of-binary-tree/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-29T14:00:00Z" },
+          { id: "sp-tr-bd-2", title: "Diameter of Binary Tree", url: "https://leetcode.com/problems/diameter-of-binary-tree/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-26T11:00:00Z" },
+          { id: "sp-tr-bd-3", title: "Binary Tree Right Side View", url: "https://leetcode.com/problems/binary-tree-right-side-view/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-tr-bd-4", title: "Count Good Nodes in Binary Tree", url: "https://leetcode.com/problems/count-good-nodes-in-binary-tree/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 2, sortOrder: 0 },
+          { id: "sp-tr-bd-5", title: "Binary Tree Maximum Path Sum", url: "https://leetcode.com/problems/binary-tree-maximum-path-sum/", difficulty: "HARD", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+    ],
+    problems: [
+      { id: "sp-tr-d-1", title: "Invert Binary Tree", url: "https://leetcode.com/problems/invert-binary-tree/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-23T08:00:00Z" },
+      { id: "sp-tr-d-2", title: "Same Tree", url: "https://leetcode.com/problems/same-tree/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-20T10:00:00Z" },
+      { id: "sp-tr-d-3", title: "Subtree of Another Tree", url: "https://leetcode.com/problems/subtree-of-another-tree/", difficulty: "EASY", status: "TODO", reviewCount: 0, sortOrder: 0 },
+      { id: "sp-tr-d-4", title: "Lowest Common Ancestor of a Binary Tree", url: "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+    ],
+  },
+  {
+    id: "seed-dp",
+    name: "Dynamic Programming",
+    description: "Optimization techniques using memoization and tabulation for overlapping subproblems.",
+    subtopics: [
+      {
+        id: "seed-1d-dp",
+        name: "1D DP",
+        description: "Linear recurrence relations for sequence-based problems.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-dp-1d-1", title: "Climbing Stairs", url: "https://leetcode.com/problems/climbing-stairs/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-17T13:00:00Z" },
+          { id: "sp-dp-1d-2", title: "House Robber", url: "https://leetcode.com/problems/house-robber/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-14T15:00:00Z" },
+          { id: "sp-dp-1d-3", title: "House Robber II", url: "https://leetcode.com/problems/house-robber-ii/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 1, sortOrder: 0 },
+          { id: "sp-dp-1d-4", title: "Decode Ways", url: "https://leetcode.com/problems/decode-ways/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-dp-1d-5", title: "Coin Change", url: "https://leetcode.com/problems/coin-change/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-dp-1d-6", title: "Longest Increasing Subsequence", url: "https://leetcode.com/problems/longest-increasing-subsequence/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 2, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-0-1-knap",
+        name: "0/1 Knapsack",
+        description: "Subset selection with capacity constraints.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-dp-kp-1", title: "Partition Equal Subset Sum", url: "https://leetcode.com/problems/partition-equal-subset-sum/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-11T09:00:00Z" },
+          { id: "sp-dp-kp-2", title: "Target Sum", url: "https://leetcode.com/problems/target-sum/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-dp-kp-3", title: "Last Stone Weight II", url: "https://leetcode.com/problems/last-stone-weight-ii/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+      {
+        id: "seed-lcs",
+        name: "Longest Common Subsequence",
+        description: "String alignment and sequence comparison using 2D DP.",
+        sortOrder: 0,
+        problems: [
+          { id: "sp-dp-lcs-1", title: "Longest Common Subsequence", url: "https://leetcode.com/problems/longest-common-subsequence/", difficulty: "MEDIUM", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-08T16:00:00Z" },
+          { id: "sp-dp-lcs-2", title: "Edit Distance", url: "https://leetcode.com/problems/edit-distance/", difficulty: "MEDIUM", status: "ATTEMPTED", reviewCount: 0, sortOrder: 0 },
+          { id: "sp-dp-lcs-3", title: "Distinct Subsequences", url: "https://leetcode.com/problems/distinct-subsequences/", difficulty: "HARD", status: "TODO", reviewCount: 0, sortOrder: 0 },
+        ],
+      },
+    ],
+    problems: [
+      { id: "sp-dp-d-1", title: "Fibonacci Number", url: "https://leetcode.com/problems/fibonacci-number/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-05T10:00:00Z" },
+      { id: "sp-dp-d-2", title: "Best Time to Buy and Sell Stock", url: "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", difficulty: "EASY", status: "SOLVED", reviewCount: 0, sortOrder: 0, solvedAt: "2026-04-02T12:00:00Z" },
+      { id: "sp-dp-d-3", title: "Word Break", url: "https://leetcode.com/problems/word-break/", difficulty: "MEDIUM", status: "MARKED_FOR_REVIEW", reviewCount: 1, sortOrder: 0 },
+      { id: "sp-dp-d-4", title: "Maximum Product Subarray", url: "https://leetcode.com/problems/maximum-product-subarray/", difficulty: "MEDIUM", status: "TODO", reviewCount: 0, sortOrder: 0 },
+    ],
+  },
+];
