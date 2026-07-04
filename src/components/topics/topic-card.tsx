@@ -1,5 +1,7 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Delete02Icon, PencilIcon } from "@hugeicons/core-free-icons";
 import {
   Card,
   CardContent,
@@ -9,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Pencil, Trash2 } from "lucide-react";
 import type { TopicCardViewModel } from "@/types/topics";
 
 interface TopicCardProps {
@@ -32,7 +33,7 @@ export function TopicCard({ topic, onContinue, onEdit, onDelete }: TopicCardProp
               onClick={() => onEdit(topic.id)}
               aria-label={`Edit ${topic.name}`}
             >
-              <Pencil />
+              <HugeiconsIcon icon={PencilIcon} />
             </Button>
             <Button
               variant="ghost"
@@ -40,7 +41,7 @@ export function TopicCard({ topic, onContinue, onEdit, onDelete }: TopicCardProp
               onClick={() => onDelete(topic.id)}
               aria-label={`Delete ${topic.name}`}
             >
-              <Trash2 />
+              <HugeiconsIcon icon={Delete02Icon} />
             </Button>
           </div>
         </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Loading02Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -11,7 +13,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Loader2 } from "lucide-react";
 
 interface DeleteTopicDialogProps {
   open: boolean;
@@ -55,7 +56,7 @@ export function DeleteTopicDialog({
             onClick={handleConfirm}
             disabled={isPending}
           >
-            {isPending && <Loader2 className="mr-1 size-3 animate-spin" />}
+            {isPending && <HugeiconsIcon icon={Loading02Icon} className="mr-1 size-3 animate-spin" />}
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

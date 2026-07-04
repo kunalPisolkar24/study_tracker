@@ -1,10 +1,10 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowUpDownIcon, Logout01Icon, MoonIcon, Sun01Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { ChevronsUpDown, LogOut, Sun, Moon } from "lucide-react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -81,7 +81,7 @@ export function AppSidebar({ user, navItems }: AppSidebarProps) {
                         setActiveNav(page);
                       }}
                     >
-                      <item.icon />
+                      <HugeiconsIcon icon={item.icon} />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -116,7 +116,7 @@ export function AppSidebar({ user, navItems }: AppSidebarProps) {
                       {user.email}
                     </span>
                   </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
+                  <HugeiconsIcon icon={ArrowUpDownIcon} className="ml-auto size-4" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -134,14 +134,14 @@ export function AppSidebar({ user, navItems }: AppSidebarProps) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setTheme(isDark ? "light" : "dark")}>
-                  {isDark ? <Sun /> : <Moon />}
+                  {isDark ? <HugeiconsIcon icon={Sun01Icon} /> : <HugeiconsIcon icon={MoonIcon} />}
                   {isDark ? "Light mode" : "Dark mode"}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOut({ redirectTo: "/" }).catch(() => {})}
                 >
-                  <LogOut />
+                  <HugeiconsIcon icon={Logout01Icon} />
                   Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>

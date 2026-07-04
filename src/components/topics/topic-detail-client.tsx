@@ -1,7 +1,8 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Add01Icon, ArrowLeft01Icon, Loading02Icon, PencilIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
-import { Plus, Pencil, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
@@ -68,7 +69,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
         </p>
         <Button variant="outline" asChild>
           <Link href="/topics">
-            <ArrowLeft />
+            <HugeiconsIcon icon={ArrowLeft01Icon} />
             Back to Topics
           </Link>
         </Button>
@@ -104,7 +105,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
           disabled={isEditing}
           onClick={() => setDialog({ type: "createSubTopic" })}
         >
-          <Plus />
+          <HugeiconsIcon icon={Add01Icon} />
           Add Sub-topic
         </Button>
         <Button
@@ -113,7 +114,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
           disabled={isEditing}
           onClick={() => setDialog({ type: "createProblem" })}
         >
-          <Plus />
+          <HugeiconsIcon icon={Add01Icon} />
           Add Problem
         </Button>
         <div className="ml-auto flex gap-2">
@@ -125,7 +126,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
                 disabled={isSaving || !hasChanges}
                 onClick={handleSave}
               >
-                {isSaving && <Loader2 className="size-3 animate-spin" />}
+                {isSaving && <HugeiconsIcon icon={Loading02Icon} className="size-3 animate-spin" />}
                 {isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
@@ -143,7 +144,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
               variant="outline"
               onClick={handleEnterEditMode}
             >
-              <Pencil className="size-3" />
+              <HugeiconsIcon icon={PencilIcon} className="size-3" />
               Edit
             </Button>
           )}
@@ -243,7 +244,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
                 disabled={isEditing}
                 onClick={() => setDialog({ type: "createSubTopic" })}
               >
-                <Plus />
+                <HugeiconsIcon icon={Add01Icon} />
                 Add Sub-topic
               </Button>
               <Button
@@ -252,7 +253,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
                 disabled={isEditing}
                 onClick={() => setDialog({ type: "createProblem" })}
               >
-                <Plus />
+                <HugeiconsIcon icon={Add01Icon} />
                 Add Problem
               </Button>
             </div>

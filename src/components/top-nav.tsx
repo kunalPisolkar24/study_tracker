@@ -1,10 +1,11 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight } from "lucide-react";
 import { mainNavItems } from "@/lib/navigation";
 import { useTopicStore } from "@/stores/topic-store";
 
@@ -31,7 +32,7 @@ export function TopNav() {
             >
               Topics
             </Link>
-            <ChevronRight className="size-3.5" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
             <span className="font-medium text-foreground">
               {topic?.name ?? "Topic"}
             </span>

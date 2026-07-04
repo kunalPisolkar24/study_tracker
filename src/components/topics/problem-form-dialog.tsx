@@ -1,5 +1,7 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Loading02Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import {
   Dialog,
@@ -20,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
 import { z } from "zod";
 import { createProblemSchema, updateProblemSchema } from "@/lib/schemas";
 import { useFormDialog } from "@/components/topics/use-form-dialog";
@@ -228,7 +229,7 @@ export function ProblemFormDialog({
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="animate-spin" />}
+            {isSubmitting && <HugeiconsIcon icon={Loading02Icon} className="animate-spin" />}
             {isEdit ? "Save Changes" : "Create"}
           </Button>
         </DialogFooter>

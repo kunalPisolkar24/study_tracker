@@ -1,5 +1,7 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon, ArrowUp01Icon, Delete02Icon, PencilIcon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -8,7 +10,6 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Pencil, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { SubTopicStoreItem, ProblemStoreItem, SubtopicViewModel } from "@/types/topics";
 import { ProblemRow } from "@/components/topics/problem-row";
@@ -62,13 +63,11 @@ export function SubtopicSection({
               className="group flex min-w-0 flex-1 cursor-pointer items-start gap-2 text-left"
               aria-expanded={isExpanded}
             >
-              <ChevronDown
-                className={cn(
-                  "mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform",
-                  isExpanded && "rotate-0",
-                  !isExpanded && "-rotate-90"
-                )}
-              />
+              <HugeiconsIcon icon={ArrowDown01Icon} className={cn(
+                                            "mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform",
+                                            isExpanded && "rotate-0",
+                                            !isExpanded && "-rotate-90"
+                                          )} />
               <div className="min-w-0 flex-1">
                 <h3 className="text-base font-medium group-hover:text-foreground/80 transition-colors">
                   {subtopic.name}
@@ -94,7 +93,7 @@ export function SubtopicSection({
                 }}
                 aria-label="Move up"
               >
-                <ArrowUp className="size-3" />
+                <HugeiconsIcon icon={ArrowUp01Icon} className="size-3" />
               </Button>
               <Button
                 variant="ghost"
@@ -106,7 +105,7 @@ export function SubtopicSection({
                 }}
                 aria-label="Move down"
               >
-                <ArrowDown className="size-3" />
+                <HugeiconsIcon icon={ArrowDown01Icon} className="size-3" />
               </Button>
               <Button
                 variant="ghost"
@@ -117,7 +116,7 @@ export function SubtopicSection({
                 }}
                 aria-label="Edit sub-topic"
               >
-                <Pencil className="size-3" />
+                <HugeiconsIcon icon={PencilIcon} className="size-3" />
               </Button>
               <Button
                 variant="ghost"
@@ -128,7 +127,7 @@ export function SubtopicSection({
                 }}
                 aria-label="Delete sub-topic"
               >
-                <Trash2 className="size-3" />
+                <HugeiconsIcon icon={Delete02Icon} className="size-3" />
               </Button>
             </div>
           )}
