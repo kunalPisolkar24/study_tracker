@@ -9,7 +9,7 @@ const robotoSlab = Roboto_Slab({ subsets: ["latin"], variable: "--font-serif" })
 export const metadata: Metadata = {
   title: "Study Tracker",
   description: "Track your study progress across topics",
-  icons: "/circle-check-big.svg",
+  icons: "/radar.svg",
 };
 
 export default function RootLayout({

@@ -7,99 +7,9 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
-}
-
-enum ProblemStatus {
-  TODO
-  ATTEMPTED
-  SOLVED
-  MARKED_FOR_REVIEW
-}
-
-enum ActivityType {
-  SOLVED
-  REVIEWED
-}
-
 model User {
   id             String  @id @default(cuid())
   email          String  @unique
   name           String?
   hashedPassword String?
-
-  topics       Topic[]
-  activityLogs ActivityLog[]
-}
-
-model Topic {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  name        String
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  subTopics SubTopic[]
-  problems  Problem[]
-
-  @@unique([userId, name])
-  @@map("topics")
-}
-
-model SubTopic {
-  id          String   @id @default(cuid())
-  topicId     String   @map("topic_id")
-  name        String
-  description String?
-  sortOrder   Int      @default(0) @map("sort_order")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-
-  topic    Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  problems Problem[]
-
-  @@unique([topicId, name])
-  @@map("sub_topics")
-}
-
-model Problem {
-  id             String         @id @default(cuid())
-  topicId        String         @map("topic_id")
-  subTopicId     String?        @map("sub_topic_id")
-  title          String
-  url            String?
-  difficulty     Difficulty
-  status         ProblemStatus  @default(TODO)
-  reviewCount    Int            @default(0) @map("review_count")
-  sortOrder      Int            @default(0) @map("sort_order")
-  notes          String?
-  lastSolvedAt   DateTime?      @map("last_solved_at")
-  lastReviewedAt DateTime?      @map("last_reviewed_at")
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt @map("updated_at")
-
-  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  subTopic     SubTopic?     @relation(fields: [subTopicId], references: [id], onDelete: SetNull)
-  activityLogs ActivityLog[]
-
-  @@map("problems")
-}
-
-model ActivityLog {
-  id           BigInt       @id @default(autoincrement())
-  problemId    String       @map("problem_id")
-  userId       String       @map("user_id")
-  activityType ActivityType @map("activity_type")
-  loggedAt     DateTime     @default(now()) @map("logged_at")
-
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, loggedAt])
-  @@map("activity_logs")
 }
