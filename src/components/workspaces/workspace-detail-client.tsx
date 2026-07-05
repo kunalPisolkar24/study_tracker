@@ -1,0 +1,323 @@
+"use client";
+
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Add01Icon, ArrowLeftIcon, ArrowRight02Icon, PencilIcon, Loading02Icon } from "@hugeicons/core-free-icons";
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useWorkspaceStore } from "@/stores/workspace-store";
+import { useNodeStore } from "@/stores/node-store";
+import { WorkspaceBreadcrumb } from "@/components/workspaces/workspace-breadcrumb";
+import { NodeTree } from "@/components/workspaces/node-tree";
+import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
+import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
+import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
+import { FilterSortBar } from "@/components/workspaces/filter-sort-bar";
+import {
+  buildTree,
+  computeProgress,
+  computeWeakCount,
+  getBreadcrumb,
+  getLeafDescendants,
+  applyFilterAndSort,
+} from "@/lib/node-utils";
+import type { NodeStoreItem, NodeFilterState } from "@/types/node";
+
+interface WorkspaceDetailClientProps {
+  workspaceId: string;
+  focusedNodeId?: string;
+}
+
+export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceDetailClientProps) {
+  const router = useRouter();
+  const workspace = useWorkspaceStore((s) => s.workspaces.find((w) => w.id === workspaceId));
+  const allNodes = useNodeStore((s) => s.nodes);
+  const addNode = useNodeStore((s) => s.addNode);
+  const updateNode = useNodeStore((s) => s.updateNode);
+  const removeNode = useNodeStore((s) => s.removeNode);
+
+  const workspaceNodes = useMemo(
+    () => allNodes.filter((n) => n.workspaceId === workspaceId),
+    [allNodes, workspaceId],
+  );
+
+  const [filter, setFilter] = useState<NodeFilterState>({
+    status: "all",
+    confidence: "all",
+    sort: "order",
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [dialog, setDialog] = useState<
+    { type: "idle" }
+    | { type: "create"; parentId?: string }
+    | { type: "edit"; target: NodeStoreItem }
+    | { type: "detail"; target: NodeStoreItem }
+    | { type: "delete"; target: NodeStoreItem }
+  >({ type: "idle" });
+
+  const rootNode = focusedNodeId ? workspaceNodes.find((n) => n.id === focusedNodeId) : null;
+
+  const rawTree = useMemo(
+    () => buildTree(workspaceNodes, rootNode?.id ?? null, 0),
+    [workspaceNodes, rootNode],
+  );
+
+  const filteredTree = useMemo(
+    () => applyFilterAndSort(rawTree, filter, workspaceNodes),
+    [rawTree, filter, workspaceNodes],
+  );
+
+  const totalLeaves = useMemo(() => {
+    const rootId = rootNode?.id ?? workspaceNodes.find((n) => n.parentId === null)?.id;
+    if (!rootId && workspaceNodes.length === 0) return 0;
+    const leaves = rootId
+      ? getLeafDescendants(workspaceNodes, rootId)
+      : workspaceNodes.filter((n) => !workspaceNodes.some((c) => c.parentId === n.id));
+    return leaves.length;
+  }, [workspaceNodes, rootNode]);
+
+  const visibleLeaves = useMemo(() => {
+    const allVisible = collectVisibleLeaves(filteredTree, workspaceNodes);
+    return allVisible.length;
+  }, [filteredTree, workspaceNodes]);
+
+  const progress = useMemo(() => {
+    if (rootNode) return computeProgress(workspaceNodes, rootNode.id);
+    if (workspaceNodes.length === 0) return { total: 0, done: 0, percent: 0 };
+    const topLevel = workspaceNodes.filter((n) => n.parentId === null);
+    const totals = topLevel.map((n) => computeProgress(workspaceNodes, n.id));
+    const total = totals.reduce((s, t) => s + t.total, 0);
+    const done = totals.reduce((s, t) => s + t.done, 0);
+    return { total, done, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
+  }, [workspaceNodes, rootNode]);
+
+  const weakCount = useMemo(() => {
+    if (rootNode) return computeWeakCount(workspaceNodes, rootNode.id);
+    const topLevel = workspaceNodes.filter((n) => n.parentId === null);
+    return topLevel.reduce((s, n) => s + computeWeakCount(workspaceNodes, n.id), 0);
+  }, [workspaceNodes, rootNode]);
+
+  const breadcrumb = useMemo(
+    () => getBreadcrumb(workspace?.name ?? "Workspace", workspaceId, workspaceNodes, focusedNodeId),
+    [workspace, workspaceId, workspaceNodes, focusedNodeId],
+  );
+
+  const handleCreate = useCallback(
+    async (title: string) => {
+      addNode({
+        workspaceId,
+        parentId: dialog.type === "create" ? dialog.parentId ?? null : null,
+        title,
+      });
+      return true;
+    },
+    [addNode, workspaceId, dialog],
+  );
+
+  const handleEdit = useCallback(
+    async (title: string) => {
+      if (dialog.type !== "edit") return false;
+      updateNode(dialog.target.id, { title });
+      return true;
+    },
+    [updateNode, dialog],
+  );
+
+  const handleDetailSave = useCallback(
+    (id: string, updates: Parameters<typeof updateNode>[1]) => {
+      updateNode(id, updates);
+    },
+    [updateNode],
+  );
+
+  const handleDelete = useCallback(() => {
+    if (dialog.type !== "delete") return;
+    removeNode(dialog.target.id);
+    if (focusedNodeId === dialog.target.id) {
+      router.push(`/workspaces/${workspaceId}`);
+    }
+    setDialog({ type: "idle" });
+  }, [dialog, removeNode, focusedNodeId, workspaceId, router]);
+
+  const handleDrillIn = useCallback(
+    (nodeId: string) => {
+      router.push(`/workspaces/${workspaceId}/${nodeId}`);
+    },
+    [router, workspaceId],
+  );
+
+  const handleMoveUp = useCallback(
+    (nodeId: string, parentId: string | null) => {
+      const siblings = allNodes
+        .filter((n) => n.parentId === parentId && n.workspaceId === workspaceId)
+        .sort((a, b) => a.orderIndex - b.orderIndex);
+      const idx = siblings.findIndex((n) => n.id === nodeId);
+      if (idx <= 0) return;
+      const prev = siblings[idx - 1];
+      const curr = siblings[idx];
+      useNodeStore.setState((state) => ({
+        nodes: state.nodes.map((n) => {
+          if (n.id === curr.id) return { ...n, orderIndex: prev.orderIndex };
+          if (n.id === prev.id) return { ...n, orderIndex: curr.orderIndex };
+          return n;
+        }),
+      }));
+    },
+    [allNodes, workspaceId],
+  );
+
+  const handleMoveDown = useCallback(
+    (nodeId: string, parentId: string | null) => {
+      const siblings = allNodes
+        .filter((n) => n.parentId === parentId && n.workspaceId === workspaceId)
+        .sort((a, b) => a.orderIndex - b.orderIndex);
+      const idx = siblings.findIndex((n) => n.id === nodeId);
+      if (idx === -1 || idx >= siblings.length - 1) return;
+      const next = siblings[idx + 1];
+      const curr = siblings[idx];
+      useNodeStore.setState((state) => ({
+        nodes: state.nodes.map((n) => {
+          if (n.id === curr.id) return { ...n, orderIndex: next.orderIndex };
+          if (n.id === next.id) return { ...n, orderIndex: curr.orderIndex };
+          return n;
+        }),
+      }));
+    },
+    [allNodes, workspaceId],
+  );
+
+  if (!workspace) {
+    return (
+      <div className="mx-auto flex w-full flex-1 flex-col items-center justify-center gap-4 px-4 py-24 text-center">
+        <p className="text-lg font-medium">Workspace not found</p>
+        <p className="text-sm text-muted-foreground">This workspace does not exist.</p>
+        <Button variant="outline" asChild>
+          <Link href="/workspaces">
+            <HugeiconsIcon icon={ArrowLeftIcon} />
+            Back to Workspaces
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-4">
+        <WorkspaceBreadcrumb items={breadcrumb} />
+      </div>
+
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>
+          {rootNode && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              {workspace.name}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-muted-foreground whitespace-nowrap">
+            {progress.done}/{progress.total} ({progress.percent}%)
+          </span>
+          {weakCount > 0 && (
+            <span className="text-sm text-red-500 whitespace-nowrap">
+              {weakCount} weak
+            </span>
+          )}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setDialog({ type: "create" })}
+          >
+            <HugeiconsIcon icon={Add01Icon} />
+            Add Topic
+          </Button>
+          <Button
+            size="sm"
+            variant={isEditing ? "default" : "outline"}
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            <HugeiconsIcon icon={isEditing ? Loading02Icon : PencilIcon} className="size-3" />
+            {isEditing ? "Done" : "Edit"}
+          </Button>
+        </div>
+      </div>
+
+      <Separator className="my-6" />
+
+      <FilterSortBar
+        filter={filter}
+        onChange={setFilter}
+        totalLeaves={totalLeaves}
+        visibleLeaves={visibleLeaves}
+      />
+
+      <div className="mt-6 flex-1">
+        <NodeTree
+          tree={filteredTree}
+          allNodes={workspaceNodes}
+          isEditing={isEditing}
+          onDrillIn={handleDrillIn}
+          onEdit={(node) => setDialog({ type: "edit", target: node })}
+          onDelete={(node) => setDialog({ type: "delete", target: node })}
+          onMoveUp={handleMoveUp}
+          onMoveDown={handleMoveDown}
+        />
+      </div>
+
+      <NodeFormDialog
+        mode="create"
+        open={dialog.type === "create"}
+        onOpenChange={(o) => { if (!o) setDialog({ type: "idle" }); }}
+        onSubmit={handleCreate}
+      />
+
+      <NodeFormDialog
+        key={dialog.type === "edit" ? dialog.target.id : "no-edit"}
+        mode="edit"
+        open={dialog.type === "edit"}
+        onOpenChange={(o) => { if (!o) setDialog({ type: "idle" }); }}
+        onSubmit={handleEdit}
+        initialValue={dialog.type === "edit" ? dialog.target.title : ""}
+      />
+
+      <NodeDetailDrawer
+        key={dialog.type === "detail" ? dialog.target.id : "no-detail"}
+        open={dialog.type === "detail"}
+        onOpenChange={(o) => { if (!o) setDialog({ type: "idle" }); }}
+        node={dialog.type === "detail" ? dialog.target : workspaceNodes[0]}
+        onSave={handleDetailSave}
+      />
+
+      <DeleteConfirmationDialog
+        open={dialog.type === "delete"}
+        onOpenChange={(o) => { if (!o) setDialog({ type: "idle" }); }}
+        title="Delete Topic"
+        description={
+          dialog.type === "delete"
+            ? `Are you sure you want to delete "${dialog.target.title}"? This will also remove all children.`
+            : ""
+        }
+        onConfirm={handleDelete}
+      />
+    </div>
+  );
+}
+
+function collectVisibleLeaves(tree: ReturnType<typeof buildTree>, allNodes: NodeStoreItem[]): NodeStoreItem[] {
+  const leaves: NodeStoreItem[] = [];
+  for (const tn of tree) {
+    if (tn.children.length === 0) {
+      const node = allNodes.find((n) => n.id === tn.node.id);
+      if (node) leaves.push(node);
+    } else {
+      leaves.push(...collectVisibleLeaves(tn.children, allNodes));
+    }
+  }
+  return leaves;
+}
