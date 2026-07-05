@@ -56,7 +56,7 @@ export function GroupsPageClient() {
 
   return (
     <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Workspace Groups</h1>
           <p className="mt-1 text-sm text-muted-foreground">
