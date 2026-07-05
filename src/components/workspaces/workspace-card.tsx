@@ -32,7 +32,7 @@ export function WorkspaceCard({
     <Card className="flex flex-col">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base">{workspace.name}</CardTitle>
+          <CardTitle className="break-words text-base">{workspace.name}</CardTitle>
           <div className="flex shrink-0 gap-0.5">
               <Button
               variant="ghost"

@@ -25,7 +25,7 @@ export function TopicCard({ topic, onContinue, onEdit, onDelete }: TopicCardProp
     <Card className="flex flex-col">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base">{topic.name}</CardTitle>
+          <CardTitle className="break-words text-base">{topic.name}</CardTitle>
           <div className="flex shrink-0 gap-0.5">
             <Button
               variant="ghost"

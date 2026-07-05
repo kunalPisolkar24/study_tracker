@@ -31,7 +31,7 @@ export function GroupCard({
     <Card className="flex flex-col">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base">{group.name}</CardTitle>
+          <CardTitle className="break-words text-base">{group.name}</CardTitle>
           <div className="flex shrink-0 gap-0.5">
               <Button
               variant="ghost"
