@@ -1,5 +1,7 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { FilterIcon } from "@hugeicons/core-free-icons";
 import {
   Select,
   SelectContent,
@@ -7,6 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { NodeFilterState } from "@/types/node";
 
 interface FilterSortBarProps {
@@ -18,35 +31,37 @@ export function FilterSortBar({ filter, onChange }: FilterSortBarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-2">
-        <Select
-          value={filter.status}
-          onValueChange={(value) => onChange({ ...filter, status: value as NodeFilterState["status"] })}
-        >
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="not_started">Not Started</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="done">Done</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={filter.confidence}
-          onValueChange={(value) => onChange({ ...filter, confidence: value as NodeFilterState["confidence"] })}
-        >
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="Confidence" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Confidence</SelectItem>
-            <SelectItem value="weak">Weak</SelectItem>
-            <SelectItem value="ok">OK</SelectItem>
-            <SelectItem value="strong">Strong</SelectItem>
-          </SelectContent>
-        </Select>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1.5")}>
+              <HugeiconsIcon icon={FilterIcon} className="size-4" />
+              Filter
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-56">
+            <DropdownMenuLabel>Status</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={filter.status}
+              onValueChange={(value) => onChange({ ...filter, status: value as NodeFilterState["status"] })}
+            >
+              <DropdownMenuRadioItem value="all">All Statuses</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="not_started">Not Started</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="in_progress">In Progress</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="done">Done</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Confidence</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={filter.confidence}
+              onValueChange={(value) => onChange({ ...filter, confidence: value as NodeFilterState["confidence"] })}
+            >
+              <DropdownMenuRadioItem value="all">All Confidence</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="weak">Weak</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="ok">OK</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="strong">Strong</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Select
           value={filter.sort}
@@ -62,7 +77,6 @@ export function FilterSortBar({ filter, onChange }: FilterSortBarProps) {
           </SelectContent>
         </Select>
       </div>
-
     </div>
   );
 }
