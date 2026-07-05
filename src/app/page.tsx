@@ -3,6 +3,6 @@ import { auth } from "@/lib/auth";
 
 export default async function HomePage() {
   const session = await auth();
-  if (session?.user) redirect("/dashboard");
+  if (session?.user) redirect("/workspaces");
   redirect("/register");
 }

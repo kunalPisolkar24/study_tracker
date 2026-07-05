@@ -9,7 +9,7 @@ function GoogleSignInButton({ disabled }: { disabled?: boolean }) {
       type="button"
       variant="outline"
       className="w-full"
-      onClick={() => signIn("google", { redirectTo: "/dashboard" })}
+      onClick={() => signIn("google", { redirectTo: "/workspaces" })}
       disabled={disabled}
     >
       <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

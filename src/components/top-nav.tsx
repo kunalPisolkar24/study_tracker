@@ -1,21 +1,12 @@
 "use client";
 
-import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { mainNavItems } from "@/lib/navigation";
-import { useTopicStore } from "@/stores/topic-store";
 
 export function TopNav() {
   const pathname = usePathname();
-
-  const topics = useTopicStore((s) => s.topics);
-  const topicDetailMatch = pathname.match(/^\/topics\/([^/]+)$/);
-  const topicId = topicDetailMatch?.[1];
-  const topic = topicId ? topics.find((t) => t.id === topicId) : null;
 
   const currentItem = mainNavItems.find((item) => item.href === pathname);
 
@@ -24,24 +15,9 @@ export function TopNav() {
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <nav className="flex items-center gap-2 text-sm text-muted-foreground">
-        {topicDetailMatch ? (
-          <>
-            <Link
-              href="/topics"
-              className="underline-offset-2 hover:text-foreground hover:underline"
-            >
-              Topics
-            </Link>
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
-            <span className="font-medium text-foreground">
-              {topic?.name ?? "Topic"}
-            </span>
-          </>
-        ) : (
-          <span className="font-medium text-foreground">
-            {currentItem?.title ?? "Dashboard"}
-          </span>
-        )}
+        <span className="font-medium text-foreground">
+          {currentItem?.title ?? "Workspaces"}
+        </span>
       </nav>
     </header>
   );
