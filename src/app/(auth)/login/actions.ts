@@ -29,7 +29,7 @@ export async function signInAction(
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/dashboard",
+      redirectTo: "/workspaces",
     });
     return { error: null };
   } catch (error) {

@@ -76,8 +76,8 @@ export function AppSidebar({ user, navItems }: AppSidebarProps) {
                       href={item.href}
                       onClick={() => {
                         const page = item.href.replace("/", "") as
-                          | "dashboard"
-                          | "topics";
+                          | "workspaces"
+                          | "groups";
                         setActiveNav(page);
                       }}
                     >

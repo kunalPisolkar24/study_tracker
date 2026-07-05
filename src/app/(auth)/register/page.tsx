@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function RegisterPage() {
   const session = await auth();
-  if (session?.user) redirect("/dashboard");
+  if (session?.user) redirect("/workspaces");
   return (
     <div className="w-full max-w-md space-y-6">
       <div className="text-center">
