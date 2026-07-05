@@ -139,10 +139,10 @@
     scrollbar-color: var(--border) transparent;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
   }
   html {
-    @apply font-serif;
+    @apply font-serif overflow-x-hidden;
   }
 
   .recharts-pie-sector path {
