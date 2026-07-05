@@ -13,7 +13,7 @@ import {
   TreeItemLabel,
   TreeDragLine,
 } from "@/components/reui/tree";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -198,28 +198,44 @@ function TreeItemContent({
 
       {isEditing && node && (
         <span className="flex shrink-0 gap-0.5">
-          <Button
-            variant="ghost"
-            size="icon-xs"
+          <span
+            className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
             onClick={(e) => {
               e.stopPropagation();
               onEdit(node);
             }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                e.stopPropagation();
+                onEdit(node);
+              }
+            }}
             aria-label="Edit"
           >
             <HugeiconsIcon icon={Edit04Icon} className="size-3" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
+          </span>
+          <span
+            className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
             onClick={(e) => {
               e.stopPropagation();
               onDelete(node);
             }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete(node);
+              }
+            }}
             aria-label="Delete"
           >
             <HugeiconsIcon icon={Delete02Icon} className="size-3" />
-          </Button>
+          </span>
         </span>
       )}
     </TreeItemLabel>
