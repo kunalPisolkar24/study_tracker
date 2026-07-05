@@ -19,7 +19,6 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
   computeProgress,
-  computeWeakCount,
   deriveStatusLabel,
   deriveStatusClass,
   deriveConfidenceClass,
@@ -68,7 +67,7 @@ export function SortableTree({
     <Tree
       tree={tree}
       indent={16}
-      className="relative before:absolute before:inset-0 before:-ms-1 before:bg-[repeating-linear-gradient(to_right,transparent_0,transparent_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)))]"
+      className="relative"
     >
       <TreeDragLine />
       {tree.getItems().map((item: ItemInstance<HeadlessItem>) => {
@@ -118,16 +117,13 @@ function TreeItemContent({
   const progress = hasChildren
     ? computeProgress(workspaceNodes, item.getId())
     : undefined;
-  const weakCount = hasChildren
-    ? computeWeakCount(workspaceNodes, item.getId())
-    : undefined;
   const nodeTitle: string = item.getItemData()?.name ?? "";
 
   return (
     <TreeItemLabel
       className={cn(
         "ps-0! flex w-full",
-        "hover:bg-accent/30",
+        "hover:bg-muted/40",
         isLeafNode && node && "cursor-pointer",
       )}
       onClick={() => {
@@ -190,9 +186,6 @@ function TreeItemContent({
           <span className="hidden w-16 sm:block">
             <Progress value={progress.percent} className="h-1.5" />
           </span>
-          {weakCount !== undefined && weakCount > 0 && (
-            <span className="text-red-500">{weakCount} weak</span>
-          )}
         </span>
       )}
 
