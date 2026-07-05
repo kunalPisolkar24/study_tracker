@@ -81,22 +81,22 @@ export function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-start gap-4 sm:items-center">
         <Button variant="ghost" size="icon" onClick={() => router.push("/groups")}>
           <HugeiconsIcon icon={ArrowLeftIcon} />
         </Button>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold tracking-tight">{group.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {groupWorkspaces.length} {groupWorkspaces.length === 1 ? "workspace" : "workspaces"}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setIsAddToGroupOpen(true)}>
+        <div className="flex w-full gap-2 sm:w-auto">
+          <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => setIsAddToGroupOpen(true)}>
             <HugeiconsIcon icon={Add01Icon} />
             Add Workspace
           </Button>
-          <Button onClick={() => setIsCreateOpen(true)}>
+          <Button className="flex-1 sm:flex-none" onClick={() => setIsCreateOpen(true)}>
             <HugeiconsIcon icon={Add01Icon} />
             Create
           </Button>
