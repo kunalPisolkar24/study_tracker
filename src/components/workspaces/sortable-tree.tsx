@@ -26,6 +26,7 @@ import {
 import { useWorkspaceTree, VIRTUAL_ROOT } from "@/lib/tree-data";
 import type { NodeStoreItem } from "@/types/node";
 import type { ItemInstance, TreeInstance } from "@headless-tree/core";
+const INDENT = 16;
 interface HeadlessItem {
   name: string;
   children?: string[];
@@ -66,8 +67,8 @@ export function SortableTree({
   return (
     <Tree
       tree={tree}
-      indent={16}
-      className="relative"
+      indent={INDENT}
+      className="relative before:absolute before:inset-0 before:ms-2 before:bg-[repeating-linear-gradient(to_right,transparent_0,transparent_calc(var(--tree-indent)-1px),var(--tree-line)_calc(var(--tree-indent)-1px),var(--tree-line)_calc(var(--tree-indent)))]"
     >
       <TreeDragLine />
       {tree.getItems().map((item: ItemInstance<HeadlessItem>) => {
@@ -123,7 +124,7 @@ function TreeItemContent({
     <TreeItemLabel
       className={cn(
         "ps-0! flex w-full",
-        "hover:bg-muted/40",
+        "hover:bg-muted",
         isLeafNode && node && "cursor-pointer",
       )}
       onClick={() => {
