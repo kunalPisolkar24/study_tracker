@@ -1,11 +1,12 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, ArrowLeftIcon, PencilIcon, Loading02Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, ArrowLeftIcon, Edit02Icon, Loading02Icon } from "@hugeicons/core-free-icons";
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
@@ -17,7 +18,6 @@ import { FilterSortBar } from "@/components/workspaces/filter-sort-bar";
 import {
   buildTree,
   computeProgress,
-  computeWeakCount,
   getLeafDescendants,
   applyFilterAndSort,
 } from "@/lib/node-utils";
@@ -96,19 +96,13 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   }, [filteredTree, workspaceNodes]);
 
   const progress = useMemo(() => {
-    if (rootNode) return computeProgress(workspaceNodes, rootNode.id);
-    if (workspaceNodes.length === 0) return { total: 0, done: 0, percent: 0 };
+    if (rootNode) return computeProgress(workspaceNodes, rootNode.id).percent;
+    if (workspaceNodes.length === 0) return 0;
     const topLevel = workspaceNodes.filter((n) => n.parentId === null);
     const totals = topLevel.map((n) => computeProgress(workspaceNodes, n.id));
     const total = totals.reduce((s, t) => s + t.total, 0);
     const done = totals.reduce((s, t) => s + t.done, 0);
-    return { total, done, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
-  }, [workspaceNodes, rootNode]);
-
-  const weakCount = useMemo(() => {
-    if (rootNode) return computeWeakCount(workspaceNodes, rootNode.id);
-    const topLevel = workspaceNodes.filter((n) => n.parentId === null);
-    return topLevel.reduce((s, n) => s + computeWeakCount(workspaceNodes, n.id), 0);
+    return total > 0 ? Math.round((done / total) * 100) : 0;
   }, [workspaceNodes, rootNode]);
 
   const handleCreate = useCallback(
@@ -179,7 +173,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>
           {rootNode && (
@@ -189,15 +183,11 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            {progress.done}/{progress.total} ({progress.percent}%)
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+            <span>{progress}%</span>
+            <Progress value={progress} className="h-1.5 w-16" />
           </span>
-          {weakCount > 0 && (
-            <span className="text-sm text-red-500 whitespace-nowrap">
-              {weakCount} weak
-            </span>
-          )}
           <Button
             size="sm"
             variant="outline"
@@ -211,7 +201,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
             variant={isEditing ? "default" : "outline"}
             onClick={() => setIsEditing(!isEditing)}
           >
-            <HugeiconsIcon icon={isEditing ? Loading02Icon : PencilIcon} className="size-3" />
+            <HugeiconsIcon icon={isEditing ? Loading02Icon : Edit02Icon} className="size-3" />
             {isEditing ? "Done" : "Edit"}
           </Button>
         </div>
