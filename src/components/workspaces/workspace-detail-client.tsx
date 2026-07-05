@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, ArrowLeftIcon, ArrowRight02Icon, PencilIcon, Loading02Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, ArrowLeftIcon, PencilIcon, Loading02Icon } from "@hugeicons/core-free-icons";
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
 import { WorkspaceBreadcrumb } from "@/components/workspaces/workspace-breadcrumb";
-import { NodeTree } from "@/components/workspaces/node-tree";
+import { SortableTree } from "@/components/workspaces/sortable-tree";
 import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
 import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
 import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
@@ -23,7 +23,7 @@ import {
   getLeafDescendants,
   applyFilterAndSort,
 } from "@/lib/node-utils";
-import type { NodeStoreItem, NodeFilterState } from "@/types/node";
+import type { NodeStoreItem, NodeFilterState, TreeNode } from "@/types/node";
 
 interface WorkspaceDetailClientProps {
   workspaceId: string;
@@ -37,6 +37,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   const addNode = useNodeStore((s) => s.addNode);
   const updateNode = useNodeStore((s) => s.updateNode);
   const removeNode = useNodeStore((s) => s.removeNode);
+  const reorderSiblings = useNodeStore((s) => s.reorderSiblings);
 
   const workspaceNodes = useMemo(
     () => allNodes.filter((n) => n.workspaceId === workspaceId),
@@ -69,6 +70,18 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     () => applyFilterAndSort(rawTree, filter, workspaceNodes),
     [rawTree, filter, workspaceNodes],
   );
+
+  const displayNodes = useMemo(() => {
+    const ids = new Set<string>();
+    function collectIds(tree: TreeNode[]) {
+      for (const tn of tree) {
+        ids.add(tn.node.id);
+        collectIds(tn.children);
+      }
+    }
+    collectIds(filteredTree);
+    return workspaceNodes.filter((n) => ids.has(n.id));
+  }, [filteredTree, workspaceNodes]);
 
   const totalLeaves = useMemo(() => {
     const rootId = rootNode?.id ?? workspaceNodes.find((n) => n.parentId === null)?.id;
@@ -149,44 +162,11 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     [router, workspaceId],
   );
 
-  const handleMoveUp = useCallback(
-    (nodeId: string, parentId: string | null) => {
-      const siblings = allNodes
-        .filter((n) => n.parentId === parentId && n.workspaceId === workspaceId)
-        .sort((a, b) => a.orderIndex - b.orderIndex);
-      const idx = siblings.findIndex((n) => n.id === nodeId);
-      if (idx <= 0) return;
-      const prev = siblings[idx - 1];
-      const curr = siblings[idx];
-      useNodeStore.setState((state) => ({
-        nodes: state.nodes.map((n) => {
-          if (n.id === curr.id) return { ...n, orderIndex: prev.orderIndex };
-          if (n.id === prev.id) return { ...n, orderIndex: curr.orderIndex };
-          return n;
-        }),
-      }));
+  const handleReorder = useCallback(
+    (parentId: string | null, orderedChildIds: string[]) => {
+      reorderSiblings(parentId, workspaceId, orderedChildIds);
     },
-    [allNodes, workspaceId],
-  );
-
-  const handleMoveDown = useCallback(
-    (nodeId: string, parentId: string | null) => {
-      const siblings = allNodes
-        .filter((n) => n.parentId === parentId && n.workspaceId === workspaceId)
-        .sort((a, b) => a.orderIndex - b.orderIndex);
-      const idx = siblings.findIndex((n) => n.id === nodeId);
-      if (idx === -1 || idx >= siblings.length - 1) return;
-      const next = siblings[idx + 1];
-      const curr = siblings[idx];
-      useNodeStore.setState((state) => ({
-        nodes: state.nodes.map((n) => {
-          if (n.id === curr.id) return { ...n, orderIndex: next.orderIndex };
-          if (n.id === next.id) return { ...n, orderIndex: curr.orderIndex };
-          return n;
-        }),
-      }));
-    },
-    [allNodes, workspaceId],
+    [reorderSiblings, workspaceId],
   );
 
   if (!workspace) {
@@ -258,15 +238,14 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
       />
 
       <div className="mt-6 flex-1">
-        <NodeTree
-          tree={filteredTree}
-          allNodes={workspaceNodes}
+        <SortableTree
+          workspaceNodes={displayNodes}
           isEditing={isEditing}
           onDrillIn={handleDrillIn}
+          onSelect={(node) => setDialog({ type: "detail", target: node })}
           onEdit={(node) => setDialog({ type: "edit", target: node })}
           onDelete={(node) => setDialog({ type: "delete", target: node })}
-          onMoveUp={handleMoveUp}
-          onMoveDown={handleMoveDown}
+          onReorder={handleReorder}
         />
       </div>
 
@@ -286,13 +265,15 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
         initialValue={dialog.type === "edit" ? dialog.target.title : ""}
       />
 
-      <NodeDetailDrawer
-        key={dialog.type === "detail" ? dialog.target.id : "no-detail"}
-        open={dialog.type === "detail"}
-        onOpenChange={(o) => { if (!o) setDialog({ type: "idle" }); }}
-        node={dialog.type === "detail" ? dialog.target : workspaceNodes[0]}
-        onSave={handleDetailSave}
-      />
+      {dialog.type === "detail" && dialog.target && (
+        <NodeDetailDrawer
+          key={dialog.target.id}
+          open
+          onOpenChange={(o) => { if (!o) setDialog({ type: "idle" }); }}
+          node={dialog.target}
+          onSave={handleDetailSave}
+        />
+      )}
 
       <DeleteConfirmationDialog
         open={dialog.type === "delete"}

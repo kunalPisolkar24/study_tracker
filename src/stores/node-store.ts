@@ -13,6 +13,7 @@ interface NodeStoreActions {
   addNode: (input: CreateNodeInput) => string;
   updateNode: (id: string, input: UpdateNodeInput) => void;
   removeNode: (id: string) => void;
+  reorderSiblings: (parentId: string | null, workspaceId: string, orderedIds: string[]) => void;
   getWorkspaceNodes: (workspaceId: string) => NodeStoreItem[];
 }
 
@@ -445,6 +446,23 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
       collectDescendants(id);
       return { nodes: state.nodes.filter((n) => !idsToRemove.has(n.id)) };
     });
+  },
+
+  reorderSiblings: (parentId, workspaceId, orderedIds) => {
+    set((state) => ({
+      nodes: state.nodes.map((node) => {
+        if (
+          node.workspaceId === workspaceId &&
+          node.parentId === parentId
+        ) {
+          const newIndex = orderedIds.indexOf(node.id);
+          if (newIndex !== -1) {
+            return { ...node, orderIndex: newIndex };
+          }
+        }
+        return node;
+      }),
+    }));
   },
 
   getWorkspaceNodes: (workspaceId) => {
