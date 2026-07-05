@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
-import { WorkspaceBreadcrumb } from "@/components/workspaces/workspace-breadcrumb";
 import { SortableTree } from "@/components/workspaces/sortable-tree";
 import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
 import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
@@ -19,7 +18,6 @@ import {
   buildTree,
   computeProgress,
   computeWeakCount,
-  getBreadcrumb,
   getLeafDescendants,
   applyFilterAndSort,
 } from "@/lib/node-utils";
@@ -113,11 +111,6 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     return topLevel.reduce((s, n) => s + computeWeakCount(workspaceNodes, n.id), 0);
   }, [workspaceNodes, rootNode]);
 
-  const breadcrumb = useMemo(
-    () => getBreadcrumb(workspace?.name ?? "Workspace", workspaceId, workspaceNodes, focusedNodeId),
-    [workspace, workspaceId, workspaceNodes, focusedNodeId],
-  );
-
   const handleCreate = useCallback(
     async (title: string) => {
       addNode({
@@ -186,10 +179,6 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-4">
-        <WorkspaceBreadcrumb items={breadcrumb} />
-      </div>
-
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>
