@@ -176,3 +176,27 @@ export function deriveConfidenceClass(confidence: NodeConfidence | null): string
       return "border-dashed text-muted-foreground";
   }
 }
+
+export function deriveStatusIconClass(status: NodeStatus | null): string {
+  switch (status) {
+    case "done":
+      return "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400";
+    case "in_progress":
+      return "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400";
+    default:
+      return "bg-muted-foreground/10 text-muted-foreground";
+  }
+}
+
+export function deriveConfidenceIconClass(confidence: NodeConfidence | null): string {
+  switch (confidence) {
+    case "strong":
+      return "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400";
+    case "ok":
+      return "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400";
+    case "weak":
+      return "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400";
+    default:
+      return "bg-muted/50 text-muted-foreground/60";
+  }
+}

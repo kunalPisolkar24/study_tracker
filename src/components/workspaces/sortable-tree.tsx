@@ -2,10 +2,16 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
+  Archive04Icon,
   ArrowRight02Icon,
+  CheckmarkSquare01Icon,
   Delete02Icon,
-  Edit04Icon,
   DragDropVerticalIcon,
+  Edit04Icon,
+  FullSignalIcon,
+  HourglassIcon,
+  LowSignalIcon,
+  MediumSignalIcon,
 } from "@hugeicons/core-free-icons";
 import {
   Tree,
@@ -14,17 +20,16 @@ import {
   TreeDragLine,
 } from "@/components/reui/tree";
 import { buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
   computeProgress,
+  deriveConfidenceIconClass,
+  deriveStatusIconClass,
   deriveStatusLabel,
-  deriveStatusClass,
-  deriveConfidenceClass,
 } from "@/lib/node-utils";
 import { useWorkspaceTree, VIRTUAL_ROOT } from "@/lib/tree-data";
-import type { NodeStoreItem } from "@/types/node";
+import type { NodeConfidence, NodeStatus, NodeStoreItem } from "@/types/node";
 import type { ItemInstance, TreeInstance } from "@headless-tree/core";
 const INDENT = 16;
 interface HeadlessItem {
@@ -91,6 +96,28 @@ export function SortableTree({
       })}
     </Tree>
   );
+}
+
+function getStatusIcon(status: NodeStatus) {
+  switch (status) {
+    case "done":
+      return CheckmarkSquare01Icon;
+    case "in_progress":
+      return HourglassIcon;
+    case "not_started":
+      return Archive04Icon;
+  }
+}
+
+function getConfidenceIcon(confidence: NodeConfidence) {
+  switch (confidence) {
+    case "strong":
+      return FullSignalIcon;
+    case "ok":
+      return MediumSignalIcon;
+    case "weak":
+      return LowSignalIcon;
+  }
 }
 
 interface TreeItemContentProps {
@@ -160,23 +187,36 @@ function TreeItemContent({
       <span className="truncate font-medium min-w-0">{nodeTitle}</span>
 
       {isLeafNode && node && (node.status || node.confidence) && (
-        <span className="hidden sm:flex items-center gap-1.5 ms-auto me-2">
+        <span className="flex items-center gap-1 shrink-0 ms-1.5">
           {node.status && (
-            <Badge
-              variant="outline"
-              className={cn("text-xs whitespace-nowrap", deriveStatusClass(node.status))}
+            <span
+              className={cn(
+                "group inline-flex items-center h-5 rounded transition-all duration-200 gap-1 overflow-hidden cursor-default",
+                "max-w-[20px] hover:max-w-[160px] hover:pr-1.5",
+                deriveStatusIconClass(node.status),
+              )}
+              aria-label={deriveStatusLabel(node.status)}
             >
-              {deriveStatusLabel(node.status)}
-            </Badge>
+              <span className="flex size-5 shrink-0 items-center justify-center">
+                <HugeiconsIcon icon={getStatusIcon(node.status)} className="size-3" {...(node.status === "in_progress" ? { strokeWidth: 2 } : {})} />
+              </span>
+              <span className="text-xs whitespace-nowrap font-medium">{deriveStatusLabel(node.status)}</span>
+            </span>
           )}
           {node.confidence && (
-            <Badge
-              variant="outline"
-              className={cn("text-xs whitespace-nowrap", deriveConfidenceClass(node.confidence))}
+            <span
+              className={cn(
+                "group inline-flex items-center h-5 rounded transition-all duration-200 gap-1 overflow-hidden cursor-default",
+                "max-w-[20px] hover:max-w-[160px] hover:pr-1.5",
+                deriveConfidenceIconClass(node.confidence),
+              )}
+              aria-label={node.confidence.charAt(0).toUpperCase() + node.confidence.slice(1)}
             >
-              {node.confidence.charAt(0).toUpperCase() +
-                node.confidence.slice(1)}
-            </Badge>
+              <span className="flex size-5 shrink-0 items-center justify-center">
+                <HugeiconsIcon icon={getConfidenceIcon(node.confidence)} className="size-3" />
+              </span>
+              <span className="text-xs whitespace-nowrap font-medium">{node.confidence.charAt(0).toUpperCase() + node.confidence.slice(1)}</span>
+            </span>
           )}
         </span>
       )}
