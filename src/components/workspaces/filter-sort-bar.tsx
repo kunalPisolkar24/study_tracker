@@ -12,11 +12,9 @@ import type { NodeFilterState } from "@/types/node";
 interface FilterSortBarProps {
   filter: NodeFilterState;
   onChange: (filter: NodeFilterState) => void;
-  totalLeaves: number;
-  visibleLeaves: number;
 }
 
-export function FilterSortBar({ filter, onChange, totalLeaves, visibleLeaves }: FilterSortBarProps) {
+export function FilterSortBar({ filter, onChange }: FilterSortBarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-2">
@@ -65,9 +63,6 @@ export function FilterSortBar({ filter, onChange, totalLeaves, visibleLeaves }: 
         </Select>
       </div>
 
-      <p className="text-xs text-muted-foreground whitespace-nowrap">
-        {visibleLeaves} / {totalLeaves} leaves
-      </p>
     </div>
   );
 }

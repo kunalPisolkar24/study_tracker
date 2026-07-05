@@ -18,7 +18,6 @@ import { FilterSortBar } from "@/components/workspaces/filter-sort-bar";
 import {
   buildTree,
   computeProgress,
-  getLeafDescendants,
   applyFilterAndSort,
 } from "@/lib/node-utils";
 import type { NodeStoreItem, NodeFilterState, TreeNode } from "@/types/node";
@@ -79,20 +78,6 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     }
     collectIds(filteredTree);
     return workspaceNodes.filter((n) => ids.has(n.id));
-  }, [filteredTree, workspaceNodes]);
-
-  const totalLeaves = useMemo(() => {
-    const rootId = rootNode?.id ?? workspaceNodes.find((n) => n.parentId === null)?.id;
-    if (!rootId && workspaceNodes.length === 0) return 0;
-    const leaves = rootId
-      ? getLeafDescendants(workspaceNodes, rootId)
-      : workspaceNodes.filter((n) => !workspaceNodes.some((c) => c.parentId === n.id));
-    return leaves.length;
-  }, [workspaceNodes, rootNode]);
-
-  const visibleLeaves = useMemo(() => {
-    const allVisible = collectVisibleLeaves(filteredTree, workspaceNodes);
-    return allVisible.length;
   }, [filteredTree, workspaceNodes]);
 
   const progress = useMemo(() => {
@@ -212,8 +197,6 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
       <FilterSortBar
         filter={filter}
         onChange={setFilter}
-        totalLeaves={totalLeaves}
-        visibleLeaves={visibleLeaves}
       />
 
       <div className="mt-6 flex-1">
@@ -267,17 +250,4 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
       />
     </div>
   );
-}
-
-function collectVisibleLeaves(tree: ReturnType<typeof buildTree>, allNodes: NodeStoreItem[]): NodeStoreItem[] {
-  const leaves: NodeStoreItem[] = [];
-  for (const tn of tree) {
-    if (tn.children.length === 0) {
-      const node = allNodes.find((n) => n.id === tn.node.id);
-      if (node) leaves.push(node);
-    } else {
-      leaves.push(...collectVisibleLeaves(tn.children, allNodes));
-    }
-  }
-  return leaves;
 }
