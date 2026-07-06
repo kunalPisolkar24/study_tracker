@@ -166,7 +166,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>

@@ -34,7 +34,7 @@ export function GroupDetailClient({ groupId }: GroupDetailClientProps) {
 
   if (!group) {
     return (
-      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-center gap-3 py-24 text-center">
           <p className="text-lg font-medium">Group not found</p>
           <p className="text-sm text-muted-foreground">
@@ -80,7 +80,7 @@ export function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-start gap-4 sm:items-center">
         <Button variant="ghost" size="icon" onClick={() => router.push("/groups")}>
           <HugeiconsIcon icon={ArrowLeftIcon} />
