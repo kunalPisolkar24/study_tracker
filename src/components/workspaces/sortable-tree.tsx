@@ -270,7 +270,7 @@ function TreeItemContent({
       )}
 
       {isEditing && node && (
-        <span className="flex shrink-0 gap-1">
+        <span className="flex shrink-0 gap-1.5 ms-3 rounded-lg bg-muted/30 px-1.5 py-0.5">
           <span
             className={cn(
               "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
