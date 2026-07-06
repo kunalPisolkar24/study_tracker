@@ -44,7 +44,6 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   const [filter, setFilter] = useState<NodeFilterState>({
     status: "all",
     confidence: "all",
-    sort: "order",
   });
 
   const [isEditing, setIsEditing] = useState(false);

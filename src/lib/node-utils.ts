@@ -110,9 +110,7 @@ export function applyFilterAndSort(
   filter: NodeFilterState,
   allNodes: NodeStoreItem[],
 ): TreeNode[] {
-  let filtered = tree.filter((tn) => nodeMatchesFilter(tn.node.id, filter, allNodes));
-  filtered = sortTree(filtered, filter, allNodes);
-  return filtered;
+  return tree.filter((tn) => nodeMatchesFilter(tn.node.id, filter, allNodes));
 }
 
 function nodeMatchesFilter(nodeId: string, filter: NodeFilterState, allNodes: NodeStoreItem[]): boolean {
@@ -129,23 +127,6 @@ function nodeMatchesFilter(nodeId: string, filter: NodeFilterState, allNodes: No
     if (filter.confidence !== "all" && l.confidence !== filter.confidence) return false;
     return true;
   });
-}
-
-function sortTree(tree: TreeNode[], filter: NodeFilterState, allNodes: NodeStoreItem[]): TreeNode[] {
-  const sorted = [...tree];
-  if (filter.sort === "alpha") {
-    sorted.sort((a, b) => a.node.title.localeCompare(b.node.title));
-  } else if (filter.sort === "reviewed") {
-    sorted.sort((a, b) => {
-      const aTime = a.node.lastReviewedAt ? new Date(a.node.lastReviewedAt).getTime() : 0;
-      const bTime = b.node.lastReviewedAt ? new Date(b.node.lastReviewedAt).getTime() : 0;
-      return bTime - aTime;
-    });
-  }
-  return sorted.map((tn) => ({
-    ...tn,
-    children: sortTree(tn.children, filter, allNodes),
-  }));
 }
 
 export function deriveStatusLabel(status: NodeStatus | null): string {

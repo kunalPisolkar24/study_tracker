@@ -43,7 +43,6 @@ export interface BreadcrumbItem {
 export interface NodeFilterState {
   status: "all" | NodeStatus;
   confidence: "all" | NodeConfidence;
-  sort: "order" | "alpha" | "reviewed";
 }
 
 export const STATUS_VALUES: NodeStatus[] = ["not_started", "in_progress", "done"];

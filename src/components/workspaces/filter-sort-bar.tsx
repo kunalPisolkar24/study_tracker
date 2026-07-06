@@ -3,13 +3,6 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { FilterIcon } from "@hugeicons/core-free-icons";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
@@ -62,20 +55,6 @@ export function FilterSortBar({ filter, onChange }: FilterSortBarProps) {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        <Select
-          value={filter.sort}
-          onValueChange={(value) => onChange({ ...filter, sort: value as NodeFilterState["sort"] })}
-        >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Sort" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="order">Manual Order</SelectItem>
-            <SelectItem value="alpha">Alphabetical</SelectItem>
-            <SelectItem value="reviewed">Recently Reviewed</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
     </div>
   );
