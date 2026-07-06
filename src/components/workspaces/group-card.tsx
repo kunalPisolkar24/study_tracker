@@ -32,23 +32,37 @@ export function GroupCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="break-words text-base">{group.name}</CardTitle>
-          <div className="flex shrink-0 gap-0.5">
-              <Button
-              variant="ghost"
-              size="icon-sm"
+          <div className="flex shrink-0 gap-1">
+            <span
+              className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400"
               onClick={() => onEdit(group.id)}
+              role="button"
+              tabIndex={0}
               aria-label={`Edit ${group.name}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onEdit(group.id);
+                }
+              }}
             >
               <HugeiconsIcon icon={Edit04Icon} className="size-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-sm"
+            </span>
+            <span
+              className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400"
               onClick={() => onDelete(group.id)}
+              role="button"
+              tabIndex={0}
               aria-label={`Delete ${group.name}`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onDelete(group.id);
+                }
+              }}
             >
               <HugeiconsIcon icon={Delete02Icon} className="size-4" />
-            </Button>
+            </span>
           </div>
         </div>
       </CardHeader>
