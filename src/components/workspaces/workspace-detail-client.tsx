@@ -143,6 +143,13 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     [reorderSiblings, workspaceId],
   );
 
+  const handleAddChild = useCallback(
+    (node: NodeStoreItem) => {
+      setDialog({ type: "create", parentId: node.id });
+    },
+    [],
+  );
+
   if (!workspace) {
     return (
       <div className="mx-auto flex w-full flex-1 flex-col items-center justify-center gap-4 px-4 py-24 text-center">
@@ -209,6 +216,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
           onSelect={(node) => setDialog({ type: "detail", target: node })}
           onEdit={(node) => setDialog({ type: "edit", target: node })}
           onDelete={(node) => setDialog({ type: "delete", target: node })}
+          onAddChild={handleAddChild}
           onReorder={handleReorder}
         />
       </div>

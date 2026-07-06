@@ -2,6 +2,7 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
+  Add01Icon,
   Archive04Icon,
   ArrowRight02Icon,
   CheckmarkSquare01Icon,
@@ -45,6 +46,7 @@ interface SortableTreeProps {
   onSelect: (node: NodeStoreItem) => void;
   onEdit: (node: NodeStoreItem) => void;
   onDelete: (node: NodeStoreItem) => void;
+  onAddChild: (node: NodeStoreItem) => void;
   onReorder: (parentId: string | null, orderedChildIds: string[]) => void;
 }
 
@@ -55,6 +57,7 @@ export function SortableTree({
   onSelect,
   onEdit,
   onDelete,
+  onAddChild,
   onReorder,
 }: SortableTreeProps) {
   const tree: TreeInstance<HeadlessItem> = useWorkspaceTree(workspaceNodes, onReorder, onDrillIn);
@@ -113,6 +116,7 @@ export function SortableTree({
               onSelect={onSelect}
               onEdit={onEdit}
               onDelete={onDelete}
+              onAddChild={onAddChild}
               onDrillIn={onDrillIn}
             />
           </TreeItem>
@@ -152,6 +156,7 @@ interface TreeItemContentProps {
   onSelect: (node: NodeStoreItem) => void;
   onEdit: (node: NodeStoreItem) => void;
   onDelete: (node: NodeStoreItem) => void;
+  onAddChild: (node: NodeStoreItem) => void;
 }
 
 function TreeItemContent({
@@ -162,6 +167,7 @@ function TreeItemContent({
   onSelect,
   onEdit,
   onDelete,
+  onAddChild,
 }: TreeItemContentProps) {
   const node = workspaceNodes.find((n) => n.id === item.getId());
   const hasChildren = (item.getItemData()?.children?.length ?? 0) > 0;
@@ -255,6 +261,25 @@ function TreeItemContent({
 
       {isEditing && node && (
         <span className="flex shrink-0 gap-0.5">
+          <span
+            className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddChild(node);
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                e.stopPropagation();
+                onAddChild(node);
+              }
+            }}
+            aria-label="Add Child"
+          >
+            <HugeiconsIcon icon={Add01Icon} className="size-3" />
+          </span>
           <span
             className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
             onClick={(e) => {
