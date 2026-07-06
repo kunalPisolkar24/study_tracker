@@ -15,6 +15,7 @@ import type { WorkspaceGroupStoreItem } from "@/types/workspace";
 interface GroupCardProps {
   group: WorkspaceGroupStoreItem;
   workspaceCount: number;
+  isEditing?: boolean;
   onOpen: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
@@ -23,6 +24,7 @@ interface GroupCardProps {
 export function GroupCard({
   group,
   workspaceCount,
+  isEditing = false,
   onOpen,
   onEdit,
   onDelete,
@@ -32,6 +34,7 @@ export function GroupCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="break-words text-base">{group.name}</CardTitle>
+          {isEditing && (
           <div className="flex shrink-0 gap-1">
             <span
               className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400"
@@ -64,6 +67,7 @@ export function GroupCard({
               <HugeiconsIcon icon={Delete02Icon} className="size-4" />
             </span>
           </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="flex-1">

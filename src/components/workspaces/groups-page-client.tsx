@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Edit02Icon, Loading02Icon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -10,14 +10,21 @@ import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { GroupCard } from "@/components/workspaces/group-card";
 import { GroupFormDialog } from "@/components/workspaces/group-form-dialog";
+import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
 import type { CreateWorkspaceGroupInput } from "@/lib/workspace-schemas";
 
 export function GroupsPageClient() {
   const router = useRouter();
   const { workspaceGroups, workspaces, addGroup, updateGroup, removeGroup } = useWorkspaceStore();
 
+  const [isEditing, setIsEditing] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     name: string;
   } | null>(null);
@@ -44,7 +51,14 @@ export function GroupsPageClient() {
       );
       return;
     }
-    removeGroup(id);
+    const g = workspaceGroups.find((x) => x.id === id);
+    if (g) setDeleteTarget({ id: g.id, name: g.name });
+  }
+
+  function confirmDelete() {
+    if (!deleteTarget) return;
+    removeGroup(deleteTarget.id);
+    setDeleteTarget(null);
     toast.success("Group deleted successfully");
   }
 
@@ -63,10 +77,20 @@ export function GroupsPageClient() {
             Organize your workspaces into groups.
           </p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)}>
-          <HugeiconsIcon icon={Add01Icon} />
-          Create
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={isEditing ? "default" : "outline"}
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            <HugeiconsIcon icon={isEditing ? Loading02Icon : Edit02Icon} className="size-3" />
+            {isEditing ? "Done" : "Edit"}
+          </Button>
+          <Button onClick={() => setIsCreateOpen(true)}>
+            <HugeiconsIcon icon={Add01Icon} />
+            Create
+          </Button>
+        </div>
       </div>
 
       <Separator className="my-6" />
@@ -96,6 +120,7 @@ export function GroupsPageClient() {
                 key={group.id}
                 group={group}
                 workspaceCount={workspaces.filter((w) => w.groupId === group.id).length}
+                isEditing={isEditing}
                 onOpen={handleOpen}
                 onEdit={(id) => {
                   const g = workspaceGroups.find((x) => x.id === id);
@@ -124,6 +149,14 @@ export function GroupsPageClient() {
         }}
         onSubmit={handleEdit}
         initialValues={editTarget ? { name: editTarget.name } : undefined}
+      />
+
+      <DeleteConfirmationDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        title="Delete Group"
+        description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+        onConfirm={confirmDelete}
       />
     </div>
   );

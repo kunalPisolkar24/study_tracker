@@ -16,6 +16,7 @@ import type { WorkspaceStoreItem } from "@/types/workspace";
 interface WorkspaceCardProps {
   workspace: WorkspaceStoreItem;
   groupName?: string;
+  isEditing?: boolean;
   onOpen: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
@@ -24,6 +25,7 @@ interface WorkspaceCardProps {
 export function WorkspaceCard({
   workspace,
   groupName,
+  isEditing = false,
   onOpen,
   onEdit,
   onDelete,
@@ -33,6 +35,7 @@ export function WorkspaceCard({
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="break-words text-base">{workspace.name}</CardTitle>
+          {isEditing && (
           <div className="flex shrink-0 gap-1">
             <span
               className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400"
@@ -65,6 +68,7 @@ export function WorkspaceCard({
               <HugeiconsIcon icon={Delete02Icon} className="size-4" />
             </span>
           </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="flex-1">

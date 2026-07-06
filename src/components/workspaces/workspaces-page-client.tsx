@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Edit02Icon, Loading02Icon } from "@hugeicons/core-free-icons";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import {
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { WorkspaceCard } from "@/components/workspaces/workspace-card";
 import { WorkspaceFormDialog } from "@/components/workspaces/workspace-form-dialog";
+import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
 import type { CreateWorkspaceInput } from "@/lib/workspace-schemas";
 
 const PAGE_SIZE = 6;
@@ -27,6 +28,7 @@ export function WorkspacesPageClient() {
   const router = useRouter();
   const { workspaces, workspaceGroups, addWorkspace, updateWorkspace, removeWorkspace } = useWorkspaceStore();
 
+  const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -36,6 +38,11 @@ export function WorkspacesPageClient() {
     id: string;
     name: string;
     groupId?: string | null;
+  } | null>(null);
+
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    name: string;
   } | null>(null);
 
   useEffect(() => {
@@ -77,7 +84,14 @@ export function WorkspacesPageClient() {
   }
 
   function handleDelete(id: string) {
-    removeWorkspace(id);
+    const w = workspaces.find((x) => x.id === id);
+    if (w) setDeleteTarget({ id: w.id, name: w.name });
+  }
+
+  function confirmDelete() {
+    if (!deleteTarget) return;
+    removeWorkspace(deleteTarget.id);
+    setDeleteTarget(null);
     toast.success("Workspace deleted successfully");
   }
 
@@ -97,10 +111,20 @@ export function WorkspacesPageClient() {
             Browse and manage your workspaces here.
           </p>
         </div>
-        <Button onClick={() => setIsCreateOpen(true)}>
-          <HugeiconsIcon icon={Add01Icon} />
-          Create
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={isEditing ? "default" : "outline"}
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            <HugeiconsIcon icon={isEditing ? Loading02Icon : Edit02Icon} className="size-3" />
+            {isEditing ? "Done" : "Edit"}
+          </Button>
+          <Button onClick={() => setIsCreateOpen(true)}>
+            <HugeiconsIcon icon={Add01Icon} />
+            Create
+          </Button>
+        </div>
       </div>
 
       <Separator className="my-6" />
@@ -154,12 +178,16 @@ export function WorkspacesPageClient() {
                   key={workspace.id}
                   workspace={workspace}
                   groupName={getGroupName(workspace.groupId)}
+                  isEditing={isEditing}
                   onOpen={handleOpen}
                   onEdit={(id) => {
                     const w = workspaces.find((x) => x.id === id);
                     if (w) setEditTarget({ id: w.id, name: w.name, groupId: w.groupId });
                   }}
-                  onDelete={handleDelete}
+                  onDelete={(id) => {
+                    const w = workspaces.find((x) => x.id === id);
+                    if (w) setDeleteTarget({ id: w.id, name: w.name });
+                  }}
                 />
               ))}
             </div>
@@ -224,6 +252,14 @@ export function WorkspacesPageClient() {
             ? { name: editTarget.name, groupId: editTarget.groupId }
             : undefined
         }
+      />
+
+      <DeleteConfirmationDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        title="Delete Workspace"
+        description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+        onConfirm={confirmDelete}
       />
     </div>
   );
