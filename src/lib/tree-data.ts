@@ -25,8 +25,10 @@ function buildItems(nodes: NodeStoreItem[]): Record<string, HeadlessItem> {
   const sorted = [...nodes].sort((a, b) => a.orderIndex - b.orderIndex);
   const result: Record<string, HeadlessItem> = {};
 
+  const nodeIds = new Set(nodes.map((n) => n.id));
+
   const topLevelIds = sorted
-    .filter((n) => n.parentId === null)
+    .filter((n) => n.parentId === null || !nodeIds.has(n.parentId))
     .map((n) => n.id);
   result[VIRTUAL_ROOT] = { name: "", children: topLevelIds };
 
