@@ -21,7 +21,6 @@ import {
   TreeItemLabel,
   TreeDragLine,
 } from "@/components/reui/tree";
-import { buttonVariants } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
@@ -274,9 +273,8 @@ function TreeItemContent({
         <span className="flex shrink-0 gap-1">
           <span
             className={cn(
-              buttonVariants({ variant: "ghost", size: "icon-xs" }),
-              "min-w-8 min-h-8 md:min-w-6 md:min-h-6",
-              "cursor-pointer",
+              "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
+              "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -297,9 +295,8 @@ function TreeItemContent({
           </span>
           <span
             className={cn(
-              buttonVariants({ variant: "ghost", size: "icon-xs" }),
-              "min-w-8 min-h-8 md:min-w-6 md:min-h-6",
-              "cursor-pointer",
+              "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
+              "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400",
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -320,9 +317,8 @@ function TreeItemContent({
           </span>
           <span
             className={cn(
-              buttonVariants({ variant: "ghost", size: "icon-xs" }),
-              "min-w-8 min-h-8 md:min-w-6 md:min-h-6",
-              "cursor-pointer",
+              "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
+              "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400",
             )}
             onClick={(e) => {
               e.stopPropagation();
