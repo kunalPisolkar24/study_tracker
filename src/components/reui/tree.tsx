@@ -26,6 +26,86 @@ interface TreeContextValue<T = any> {
   toggleIconType?: ToggleIconType
 }
 
+interface TreeItemLinesProps {
+  level: number
+  indent: number
+  isLastChild: boolean
+  ancestorIsLastChild: boolean[]
+}
+
+function TreeItemLines({ level, indent, isLastChild, ancestorIsLastChild }: TreeItemLinesProps) {
+  if (level === 0) return null
+
+  const segments: React.ReactNode[] = []
+
+  for (let a = 0; a < level - 1; a++) {
+    const pos = a * indent
+    const last = ancestorIsLastChild[a]
+    const height = last ? 50 : 100
+    segments.push(
+      <span
+        key={`v${a}`}
+        style={{
+          position: "absolute",
+          left: pos,
+          top: 0,
+          width: 1.5,
+          height: `${height}%`,
+          backgroundColor: "var(--tree-line)",
+        }}
+      />,
+    )
+  }
+
+  const connectorPos = (level - 1) * indent
+  const connectorHeight = isLastChild ? 50 : 100
+  const horizontalWidth = indent - 1.5
+  if (horizontalWidth > 0) {
+    segments.push(
+      <span
+        key="ch"
+        style={{
+          position: "absolute",
+          left: connectorPos + 1.5,
+          top: "50%",
+          width: horizontalWidth,
+          height: 1.5,
+          backgroundColor: "var(--tree-line)",
+        }}
+      />,
+    )
+  }
+  segments.push(
+    <span
+      key="cv"
+      style={{
+        position: "absolute",
+        left: connectorPos,
+        top: 0,
+        width: 1.5,
+        height: `${connectorHeight}%`,
+        backgroundColor: "var(--tree-line)",
+      }}
+    />,
+  )
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        width: level * indent,
+        height: "100%",
+        overflow: "hidden",
+        pointerEvents: "none",
+      }}
+    >
+      {segments}
+    </div>
+  )
+}
+
 const TreeContext = createContext<TreeContextValue>({
   indent: 20,
   currentItem: undefined,
@@ -88,6 +168,8 @@ interface TreeItemProps<T = any> extends Omit<
   item: ItemInstance<T>
   indent?: number
   asChild?: boolean
+  isLastChild?: boolean
+  ancestorIsLastChild?: boolean[]
 }
 
 function TreeItem<T = any>({
@@ -95,6 +177,8 @@ function TreeItem<T = any>({
   className,
   asChild = false,
   children,
+  isLastChild = false,
+  ancestorIsLastChild = [],
   ...props
 }: TreeItemProps<T>) {
   const parentContext = useTreeContext<T>()
@@ -116,7 +200,7 @@ function TreeItem<T = any>({
     "data-slot": "tree-item",
     style: mergedStyle,
     className: cn(
-      "z-10 ps-(--tree-padding) outline-hidden select-none not-last:pb-0.5 focus:z-20 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "z-10 ps-(--tree-padding) outline-hidden select-none not-last:pb-0.5 focus:z-20 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 relative",
       className
     ),
     "data-focus":
@@ -143,10 +227,17 @@ function TreeItem<T = any>({
   }
 
   const Comp = asChild ? Slot.Root : "button"
+  const level = item.getItemMeta().level
 
   return (
     <TreeContext.Provider value={{ ...parentContext, currentItem: item }}>
       <Comp {...defaultProps} {...otherProps}>
+        <TreeItemLines
+          level={level}
+          indent={indent}
+          isLastChild={isLastChild}
+          ancestorIsLastChild={ancestorIsLastChild}
+        />
         {children}
       </Comp>
     </TreeContext.Provider>
