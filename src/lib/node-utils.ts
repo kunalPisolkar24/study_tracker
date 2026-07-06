@@ -110,7 +110,21 @@ export function applyFilterAndSort(
   filter: NodeFilterState,
   allNodes: NodeStoreItem[],
 ): TreeNode[] {
-  return tree.filter((tn) => nodeMatchesFilter(tn.node.id, filter, allNodes));
+  const isActive = filter.status !== "all" || filter.confidence !== "all";
+  if (!isActive) return tree;
+
+  function filterNode(tn: TreeNode): TreeNode | null {
+    const filteredChildren = tn.children
+      .map(filterNode)
+      .filter((n): n is TreeNode => n !== null);
+
+    if (tn.children.length === 0) {
+      return nodeMatchesFilter(tn.node.id, filter, allNodes) ? tn : null;
+    }
+    return filteredChildren.length > 0 ? { ...tn, children: filteredChildren } : null;
+  }
+
+  return tree.map(filterNode).filter((n): n is TreeNode => n !== null);
 }
 
 function nodeMatchesFilter(nodeId: string, filter: NodeFilterState, allNodes: NodeStoreItem[]): boolean {
