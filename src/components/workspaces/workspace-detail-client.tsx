@@ -77,8 +77,11 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
       }
     }
     collectIds(filteredTree);
+    if (rootNode) {
+      ids.add(rootNode.id);
+    }
     return workspaceNodes.filter((n) => ids.has(n.id));
-  }, [filteredTree, workspaceNodes]);
+  }, [filteredTree, workspaceNodes, rootNode]);
 
   const progress = useMemo(() => {
     if (rootNode) return computeProgress(workspaceNodes, rootNode.id).percent;
