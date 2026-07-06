@@ -205,13 +205,9 @@ function TreeItemContent({
             className="size-4 text-primary"
           />
         </span>
-      ) : isLeafNode ? (
-        <span className="flex shrink-0 items-center justify-center size-5 me-1">
-          <span className="size-1.5 rounded-full bg-muted-foreground/40" />
-        </span>
       ) : null}
 
-      <span className="truncate font-medium min-w-0">{nodeTitle}</span>
+      <span className={cn("truncate font-medium min-w-0", isLeafNode && "ms-1.5")}>{nodeTitle}</span>
 
       {isLeafNode && node && (node.status || node.confidence) && (
         <span className="flex items-center gap-1 shrink-0 ms-1.5">
