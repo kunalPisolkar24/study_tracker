@@ -28,7 +28,7 @@ export function TopNav() {
     return getBreadcrumb(workspace.name, workspaceId, allNodes, nodeId);
   }, [isWorkspacePage, workspace, workspaceId, allNodes, nodeId]);
 
-  const currentItem = mainNavItems.find((item) => item.href === pathname);
+  const currentItem = mainNavItems.find((item) => pathname === item.href || pathname.startsWith(item.href + "/"));
 
   return (
     <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
