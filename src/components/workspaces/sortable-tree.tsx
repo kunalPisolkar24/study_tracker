@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Add01Icon,
@@ -31,6 +32,7 @@ import {
   MAX_INLINE_DEPTH,
 } from "@/lib/node-utils";
 import { useWorkspaceTree, VIRTUAL_ROOT } from "@/lib/tree-data";
+import { useTouchDrag } from "@/hooks/use-touch-drag";
 import type { NodeConfidence, NodeStatus, NodeStoreItem } from "@/types/node";
 import type { ItemInstance, TreeInstance } from "@headless-tree/core";
 const INDENT = 16;
@@ -61,6 +63,11 @@ export function SortableTree({
   onReorder,
 }: SortableTreeProps) {
   const tree: TreeInstance<HeadlessItem> = useWorkspaceTree(workspaceNodes, onReorder, onDrillIn);
+  const [treeContainerEl, setTreeContainerEl] = useState<HTMLElement | null>(null);
+  const treeContainerRefCallback = useCallback((el: HTMLDivElement | null) => {
+    setTreeContainerEl(el);
+  }, []);
+  useTouchDrag({ tree, onReorder, enabled: isEditing, containerEl: treeContainerEl });
 
   if (workspaceNodes.length === 0) {
     return (
@@ -94,35 +101,37 @@ export function SortableTree({
   }
 
   return (
-    <Tree
-      tree={tree}
-      indent={INDENT}
-      className="relative"
-    >
-      <TreeDragLine />
-      {treeItems.map((item: ItemInstance<HeadlessItem>) => {
-        const meta = itemMetaMap.get(item.getId())!;
-        return (
-          <TreeItem
-            key={item.getId()}
-            item={item}
-            isLastChild={meta.isLastChild}
-            ancestorIsLastChild={meta.ancestorIsLastChild}
-          >
-            <TreeItemContent
+    <div ref={treeContainerRefCallback}>
+      <Tree
+        tree={tree}
+        indent={INDENT}
+        className="relative"
+      >
+        <TreeDragLine />
+        {treeItems.map((item: ItemInstance<HeadlessItem>) => {
+          const meta = itemMetaMap.get(item.getId())!;
+          return (
+            <TreeItem
+              key={item.getId()}
               item={item}
-              workspaceNodes={workspaceNodes}
-              isEditing={isEditing}
-              onSelect={onSelect}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              onAddChild={onAddChild}
-              onDrillIn={onDrillIn}
-            />
-          </TreeItem>
-        );
-      })}
-    </Tree>
+              isLastChild={meta.isLastChild}
+              ancestorIsLastChild={meta.ancestorIsLastChild}
+            >
+              <TreeItemContent
+                item={item}
+                workspaceNodes={workspaceNodes}
+                isEditing={isEditing}
+                onSelect={onSelect}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onAddChild={onAddChild}
+                onDrillIn={onDrillIn}
+              />
+            </TreeItem>
+          );
+        })}
+      </Tree>
+    </div>
   );
 }
 
@@ -195,7 +204,9 @@ function TreeItemContent({
         <span
           {...item.getDragHandleProps()}
           className={cn(
-            "flex shrink-0 cursor-grab items-center justify-center rounded p-1 me-1",
+            "flex shrink-0 cursor-grab items-center justify-center rounded me-1",
+            "min-w-9 min-h-9 md:min-w-0 md:min-h-0",
+            "touch-none",
             "text-muted-foreground hover:text-foreground active:cursor-grabbing",
           )}
           aria-label="Drag to reorder"
@@ -262,7 +273,11 @@ function TreeItemContent({
       {isEditing && node && (
         <span className="flex shrink-0 gap-0.5">
           <span
-            className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon-xs" }),
+              "min-w-8 min-h-8 md:min-w-0 md:min-h-0",
+              "cursor-pointer",
+            )}
             onClick={(e) => {
               e.stopPropagation();
               onAddChild(node);
@@ -281,7 +296,11 @@ function TreeItemContent({
             <HugeiconsIcon icon={Add01Icon} className="size-3" />
           </span>
           <span
-            className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon-xs" }),
+              "min-w-8 min-h-8 md:min-w-0 md:min-h-0",
+              "cursor-pointer",
+            )}
             onClick={(e) => {
               e.stopPropagation();
               onEdit(node);
@@ -300,7 +319,11 @@ function TreeItemContent({
             <HugeiconsIcon icon={Edit04Icon} className="size-3" />
           </span>
           <span
-            className={cn(buttonVariants({ variant: "ghost", size: "icon-xs" }), "cursor-pointer")}
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon-xs" }),
+              "min-w-8 min-h-8 md:min-w-0 md:min-h-0",
+              "cursor-pointer",
+            )}
             onClick={(e) => {
               e.stopPropagation();
               onDelete(node);

@@ -154,7 +154,7 @@ function Tree({
       <Comp
         data-slot="tree"
         style={mergedStyle}
-        className={cn("flex flex-col", className)}
+        className={cn("flex flex-col overflow-x-auto", className)}
         {...otherProps}
       />
     </TreeContext.Provider>
