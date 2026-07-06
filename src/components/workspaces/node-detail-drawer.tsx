@@ -68,11 +68,11 @@ export function NodeDetailDrawer({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg p-4 sm:p-6 max-h-[85dvh] grid-rows-[auto_1fr_auto]">
         <DialogHeader>
           <DialogTitle>{node.title}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-y-auto">
           <div className="space-y-2">
             <Label htmlFor="detail-title">Title</Label>
             <Input
@@ -82,10 +82,10 @@ export function NodeDetailDrawer({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Status</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {STATUS_OPTIONS.map((opt) => (
                   <Badge
                     key={opt.value}
@@ -104,7 +104,7 @@ export function NodeDetailDrawer({
 
             <div className="space-y-2">
               <Label>Confidence</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {CONFIDENCE_OPTIONS.map((opt) => (
                   <Badge
                     key={opt.value}
