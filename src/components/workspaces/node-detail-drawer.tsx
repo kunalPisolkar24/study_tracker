@@ -12,13 +12,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Archive04Icon,
+  CheckmarkSquare01Icon,
+  FullSignalIcon,
+  HourglassIcon,
+  LowSignalIcon,
+  MediumSignalIcon,
+} from "@hugeicons/core-free-icons";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { deriveStatusClass, deriveConfidenceClass } from "@/lib/node-utils";
@@ -31,16 +33,16 @@ interface NodeDetailDrawerProps {
   onSave: (id: string, updates: { status?: NodeStatus | null; confidence?: NodeConfidence | null; notes?: string; title?: string }) => void;
 }
 
-const STATUS_OPTIONS: Array<{ value: NodeStatus; label: string }> = [
-  { value: "not_started", label: "Not Started" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "done", label: "Done" },
+const STATUS_OPTIONS: Array<{ value: NodeStatus; label: string; icon: typeof Archive04Icon }> = [
+  { value: "not_started", label: "Not Started", icon: Archive04Icon },
+  { value: "in_progress", label: "In Progress", icon: HourglassIcon },
+  { value: "done", label: "Done", icon: CheckmarkSquare01Icon },
 ];
 
-const CONFIDENCE_OPTIONS: Array<{ value: NodeConfidence; label: string }> = [
-  { value: "weak", label: "Weak" },
-  { value: "ok", label: "OK" },
-  { value: "strong", label: "Strong" },
+const CONFIDENCE_OPTIONS: Array<{ value: NodeConfidence; label: string; icon: typeof LowSignalIcon }> = [
+  { value: "weak", label: "Weak", icon: LowSignalIcon },
+  { value: "ok", label: "OK", icon: MediumSignalIcon },
+  { value: "strong", label: "Strong", icon: FullSignalIcon },
 ];
 
 export function NodeDetailDrawer({
@@ -96,7 +98,10 @@ export function NodeDetailDrawer({
                     )}
                     onClick={() => setStatus(status === opt.value ? null : opt.value)}
                   >
-                    {opt.label}
+                    <span className="flex items-center gap-1.5">
+                      <HugeiconsIcon icon={opt.icon} className="size-3.5" />
+                      {opt.label}
+                    </span>
                   </Badge>
                 ))}
               </div>
@@ -115,7 +120,10 @@ export function NodeDetailDrawer({
                     )}
                     onClick={() => setConfidence(confidence === opt.value ? null : opt.value)}
                   >
-                    {opt.label}
+                    <span className="flex items-center gap-1.5">
+                      <HugeiconsIcon icon={opt.icon} className="size-3.5" />
+                      {opt.label}
+                    </span>
                   </Badge>
                 ))}
               </div>
