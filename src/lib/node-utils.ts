@@ -1,6 +1,6 @@
 import type { NodeStoreItem, TreeNode, BreadcrumbItem, NodeFilterState, NodeStatus, NodeConfidence } from "@/types/node";
 
-const MAX_INLINE_DEPTH = 2;
+export const MAX_INLINE_DEPTH = 2;
 
 function sortNodes(nodes: NodeStoreItem[]): NodeStoreItem[] {
   return [...nodes].sort((a, b) => a.orderIndex - b.orderIndex);

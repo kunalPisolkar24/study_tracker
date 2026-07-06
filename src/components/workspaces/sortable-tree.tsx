@@ -27,6 +27,7 @@ import {
   deriveConfidenceIconClass,
   deriveStatusIconClass,
   deriveStatusLabel,
+  MAX_INLINE_DEPTH,
 } from "@/lib/node-utils";
 import { useWorkspaceTree, VIRTUAL_ROOT } from "@/lib/tree-data";
 import type { NodeConfidence, NodeStatus, NodeStoreItem } from "@/types/node";
@@ -90,6 +91,7 @@ export function SortableTree({
               onSelect={onSelect}
               onEdit={onEdit}
               onDelete={onDelete}
+              onDrillIn={onDrillIn}
             />
           </TreeItem>
         );
@@ -124,6 +126,7 @@ interface TreeItemContentProps {
   item: ItemInstance<HeadlessItem>;
   workspaceNodes: NodeStoreItem[];
   isEditing: boolean;
+  onDrillIn: (nodeId: string) => void;
   onSelect: (node: NodeStoreItem) => void;
   onEdit: (node: NodeStoreItem) => void;
   onDelete: (node: NodeStoreItem) => void;
@@ -133,6 +136,7 @@ function TreeItemContent({
   item,
   workspaceNodes,
   isEditing,
+  onDrillIn,
   onSelect,
   onEdit,
   onDelete,
@@ -140,7 +144,7 @@ function TreeItemContent({
   const node = workspaceNodes.find((n) => n.id === item.getId());
   const hasChildren = (item.getItemData()?.children?.length ?? 0) > 0;
   const depth = item.getItemMeta().level - 1;
-  const isDeepNode = depth > 2 && hasChildren;
+  const isDeepNode = depth > MAX_INLINE_DEPTH && hasChildren;
   const isLeafNode = !hasChildren;
   const progress = hasChildren
     ? computeProgress(workspaceNodes, item.getId())
@@ -156,6 +160,7 @@ function TreeItemContent({
       )}
       onClick={() => {
         if (isLeafNode && node) onSelect(node);
+        else if (isDeepNode && node) onDrillIn(item.getId());
       }}
     >
       {isEditing && (
