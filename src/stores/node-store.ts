@@ -226,6 +226,25 @@ const SEED_NODES: NodeStoreItem[] = [
   c("cn-wire-csma",     "cn-wireless", CN, "CSMA/CA",               1, { status: "done", confidence: "ok", lastReviewedAt: ts }),
   c("cn-wire-cellular", "cn-wireless", CN, "Cellular Networks (4G/5G)", 2, { status: "not_started", confidence: null }),
 
+  // Deep Testing Hierarchy — 14 levels under Physical Layer
+  c("cn-deep-l2",  "cn-physical",  CN, "Deep Test — Level 2",  10),
+  c("cn-deep-l3",  "cn-deep-l2",   CN, "Deep Test — Level 3",  0),
+  c("cn-deep-l4",  "cn-deep-l3",   CN, "Deep Test — Level 4",  0),
+  c("cn-deep-l5",  "cn-deep-l4",   CN, "Deep Test — Level 5",  0),
+  c("cn-deep-l6",  "cn-deep-l5",   CN, "Deep Test — Level 6",  0),
+  c("cn-deep-l7",  "cn-deep-l6",   CN, "Deep Test — Level 7",  0),
+  c("cn-deep-l8",  "cn-deep-l7",   CN, "Deep Test — Level 8",  0),
+  c("cn-deep-l9",  "cn-deep-l8",   CN, "Deep Test — Level 9",  0),
+  c("cn-deep-l10", "cn-deep-l9",   CN, "Deep Test — Level 10", 0),
+  c("cn-deep-l11", "cn-deep-l10",  CN, "Deep Test — Level 11", 0),
+  c("cn-deep-l12", "cn-deep-l11",  CN, "Deep Test — Level 12", 0),
+  c("cn-deep-l13", "cn-deep-l12",  CN, "Deep Test — Level 13", 0),
+  c("cn-deep-l14", "cn-deep-l13",  CN, "Deep Test — Level 14", 0),
+  c("cn-deep-l14a","cn-deep-l14",  CN, "Leaf — Done & Strong",           0, { status: "done", confidence: "strong", lastReviewedAt: ts }),
+  c("cn-deep-l14b","cn-deep-l14",  CN, "Leaf — In Progress & Weak",      1, { status: "in_progress", confidence: "weak", lastReviewedAt: ts }),
+  c("cn-deep-l14c","cn-deep-l14",  CN, "Leaf — Not Started",             2, { status: "not_started", confidence: null }),
+  c("cn-deep-l14d","cn-deep-l14",  CN, "Leaf — Done & OK",               3, { status: "done", confidence: "ok", lastReviewedAt: ts }),
+
   // ════════════════════════════════════════════════════════════════
   // Operating Systems — 5 levels deep
   // ════════════════════════════════════════════════════════════════
