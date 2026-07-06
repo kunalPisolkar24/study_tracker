@@ -470,14 +470,10 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   reorderSiblings: (parentId, workspaceId, orderedIds) => {
     set((state) => ({
       nodes: state.nodes.map((node) => {
-        if (
-          node.workspaceId === workspaceId &&
-          node.parentId === parentId
-        ) {
-          const newIndex = orderedIds.indexOf(node.id);
-          if (newIndex !== -1) {
-            return { ...node, orderIndex: newIndex };
-          }
+        if (node.workspaceId !== workspaceId) return node;
+        const newIndex = orderedIds.indexOf(node.id);
+        if (newIndex !== -1) {
+          return { ...node, parentId, orderIndex: newIndex };
         }
         return node;
       }),
