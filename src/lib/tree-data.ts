@@ -6,6 +6,7 @@ import {
   syncDataLoaderFeature,
   hotkeysCoreFeature,
   dragAndDropFeature,
+  keyboardDragAndDropFeature,
   createOnDropHandler,
   isOrderedDragTarget,
   type ItemInstance,
@@ -86,7 +87,8 @@ export function useWorkspaceTree(
     dataLoader,
     indent: INDENT,
     canDrop: (_items, target) => {
-      return isOrderedDragTarget(target);
+      if (isOrderedDragTarget(target)) return true;
+      return target.item.isFolder();
     },
     onDrop: createOnDropHandler(
       // eslint-disable-next-line react-hooks/refs
@@ -104,6 +106,7 @@ export function useWorkspaceTree(
       syncDataLoaderFeature,
       hotkeysCoreFeature,
       dragAndDropFeature,
+      keyboardDragAndDropFeature,
     ],
   });
 
