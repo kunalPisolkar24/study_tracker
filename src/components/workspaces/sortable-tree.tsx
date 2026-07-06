@@ -224,21 +224,21 @@ function TreeItemContent({
         </span>
       ) : null}
 
-      <span className={cn("truncate font-medium min-w-0", isLeafNode && "ms-1.5")}>{nodeTitle}</span>
+      <span className={cn("truncate font-medium min-w-0 text-base", isLeafNode && "ms-1.5")}>{nodeTitle}</span>
 
       {isLeafNode && node && (node.status || node.confidence) && (
-        <span className="flex items-center gap-1 shrink-0 ms-1.5">
+        <span className="flex items-center gap-1.5 shrink-0 ms-1.5">
           {node.status && (
             <span
               className={cn(
-                "group inline-flex items-center h-5 rounded transition-all duration-200 gap-1 overflow-hidden cursor-default",
-                "max-w-[20px] hover:max-w-[160px] hover:pr-1.5",
+                "group inline-flex items-center h-6 rounded transition-all duration-200 gap-1 overflow-hidden cursor-default",
+                "max-w-[24px] hover:max-w-[160px] hover:pr-1.5",
                 deriveStatusIconClass(node.status),
               )}
               aria-label={deriveStatusLabel(node.status)}
             >
-              <span className="flex size-5 shrink-0 items-center justify-center">
-                <HugeiconsIcon icon={getStatusIcon(node.status)} className="size-3" {...(node.status === "in_progress" ? { strokeWidth: 2 } : {})} />
+              <span className="flex size-6 shrink-0 items-center justify-center">
+                <HugeiconsIcon icon={getStatusIcon(node.status)} className="size-3.5" {...(node.status === "in_progress" ? { strokeWidth: 2 } : {})} />
               </span>
               <span className="text-xs whitespace-nowrap font-medium">{deriveStatusLabel(node.status)}</span>
             </span>
@@ -246,14 +246,14 @@ function TreeItemContent({
           {node.confidence && (
             <span
               className={cn(
-                "group inline-flex items-center h-5 rounded transition-all duration-200 gap-1 overflow-hidden cursor-default",
-                "max-w-[20px] hover:max-w-[160px] hover:pr-1.5",
+                "group inline-flex items-center h-6 rounded transition-all duration-200 gap-1 overflow-hidden cursor-default",
+                "max-w-[24px] hover:max-w-[160px] hover:pr-1.5",
                 deriveConfidenceIconClass(node.confidence),
               )}
               aria-label={node.confidence.charAt(0).toUpperCase() + node.confidence.slice(1)}
             >
-              <span className="flex size-5 shrink-0 items-center justify-center">
-                <HugeiconsIcon icon={getConfidenceIcon(node.confidence)} className="size-3" />
+              <span className="flex size-6 shrink-0 items-center justify-center">
+                <HugeiconsIcon icon={getConfidenceIcon(node.confidence)} className="size-3.5" />
               </span>
               <span className="text-xs whitespace-nowrap font-medium">{node.confidence.charAt(0).toUpperCase() + node.confidence.slice(1)}</span>
             </span>
@@ -271,11 +271,11 @@ function TreeItemContent({
       )}
 
       {isEditing && node && (
-        <span className="flex shrink-0 gap-0.5">
+        <span className="flex shrink-0 gap-1">
           <span
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon-xs" }),
-              "min-w-8 min-h-8 md:min-w-0 md:min-h-0",
+              "min-w-8 min-h-8 md:min-w-6 md:min-h-6",
               "cursor-pointer",
             )}
             onClick={(e) => {
@@ -293,12 +293,12 @@ function TreeItemContent({
             }}
             aria-label="Add Child"
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-3" />
+            <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
           </span>
           <span
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon-xs" }),
-              "min-w-8 min-h-8 md:min-w-0 md:min-h-0",
+              "min-w-8 min-h-8 md:min-w-6 md:min-h-6",
               "cursor-pointer",
             )}
             onClick={(e) => {
@@ -316,12 +316,12 @@ function TreeItemContent({
             }}
             aria-label="Edit"
           >
-            <HugeiconsIcon icon={Edit04Icon} className="size-3" />
+            <HugeiconsIcon icon={Edit04Icon} className="size-3.5" />
           </span>
           <span
             className={cn(
               buttonVariants({ variant: "ghost", size: "icon-xs" }),
-              "min-w-8 min-h-8 md:min-w-0 md:min-h-0",
+              "min-w-8 min-h-8 md:min-w-6 md:min-h-6",
               "cursor-pointer",
             )}
             onClick={(e) => {
@@ -339,7 +339,7 @@ function TreeItemContent({
             }}
             aria-label="Delete"
           >
-            <HugeiconsIcon icon={Delete02Icon} className="size-3" />
+            <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
           </span>
         </span>
       )}
