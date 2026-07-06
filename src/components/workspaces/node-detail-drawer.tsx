@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Archive04Icon,
-  CheckmarkSquare01Icon,
+  Tick02Icon,
   FullSignalIcon,
   HourglassIcon,
   LowSignalIcon,
@@ -36,7 +36,7 @@ interface NodeDetailDrawerProps {
 const STATUS_OPTIONS: Array<{ value: NodeStatus; label: string; icon: typeof Archive04Icon }> = [
   { value: "not_started", label: "Not Started", icon: Archive04Icon },
   { value: "in_progress", label: "In Progress", icon: HourglassIcon },
-  { value: "done", label: "Done", icon: CheckmarkSquare01Icon },
+    { value: "done", label: "Done", icon: Tick02Icon },
 ];
 
 const CONFIDENCE_OPTIONS: Array<{ value: NodeConfidence; label: string; icon: typeof LowSignalIcon }> = [

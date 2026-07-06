@@ -6,7 +6,7 @@ import {
   Add01Icon,
   Archive04Icon,
   ArrowRight02Icon,
-  CheckmarkSquare01Icon,
+  Tick02Icon,
   Delete02Icon,
   DragDropVerticalIcon,
   Edit04Icon,
@@ -138,7 +138,7 @@ export function SortableTree({
 function getStatusIcon(status: NodeStatus) {
   switch (status) {
     case "done":
-      return CheckmarkSquare01Icon;
+        return Tick02Icon;
     case "in_progress":
       return HourglassIcon;
     case "not_started":
