@@ -1,4 +1,4 @@
-import { Folders, LayoutGrid } from "@hugeicons/core-free-icons";
+import { BookOpen01Icon, Folders, LayoutGrid } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 
 export interface NavItem {
