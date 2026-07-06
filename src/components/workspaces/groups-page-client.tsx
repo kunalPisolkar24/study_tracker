@@ -44,13 +44,6 @@ export function GroupsPageClient() {
   }
 
   function handleDelete(id: string) {
-    const count = workspaces.filter((w) => w.groupId === id).length;
-    if (count > 0) {
-      toast.error(
-        `Cannot delete "${workspaceGroups.find((g) => g.id === id)?.name}" — it contains ${count} workspace${count === 1 ? "" : "s"}. Remove them first or reassign them.`,
-      );
-      return;
-    }
     const g = workspaceGroups.find((x) => x.id === id);
     if (g) setDeleteTarget({ id: g.id, name: g.name });
   }
@@ -155,7 +148,15 @@ export function GroupsPageClient() {
         open={!!deleteTarget}
         onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
         title="Delete Group"
-        description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
+        description={deleteTarget
+          ? (() => {
+              const count = workspaces.filter((w) => w.groupId === deleteTarget.id).length;
+              const base = `Are you sure you want to delete "${deleteTarget.name}"?`;
+              return count > 0
+                ? `${base} ${count} workspace${count === 1 ? "" : "s"} will become ungrouped. This action cannot be undone.`
+                : `${base} This action cannot be undone.`;
+            })()
+          : ""}
         onConfirm={confirmDelete}
       />
     </div>
