@@ -2,7 +2,7 @@ import type { NodeStoreItem, CreateNodeInput, UpdateNodeInput } from "@/types/no
 
 let counter = 0;
 
-function generateId(): string {
+export function generateId(): string {
   counter++;
   return `node-${Date.now()}-${counter}-${Math.random().toString(36).slice(2, 7)}`;
 }

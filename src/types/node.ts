@@ -1,5 +1,21 @@
 export type NodeStatus = "not_started" | "in_progress" | "done";
 
+export type NodeActivityAction =
+  | "created"
+  | "marked_done"
+  | "marked_in_progress"
+  | "marked_not_started"
+  | "confidence_changed"
+  | "reviewed";
+
+export interface NodeActivityEntry {
+  id: string;
+  nodeId: string;
+  workspaceId: string;
+  action: NodeActivityAction;
+  timestamp: string;
+}
+
 export type NodeConfidence = "weak" | "ok" | "strong";
 
 export interface NodeStoreItem {

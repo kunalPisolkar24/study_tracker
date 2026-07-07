@@ -1,11 +1,12 @@
 "use client";
 
 import { create } from "zustand";
-import type { NodeStoreItem, CreateNodeInput, UpdateNodeInput } from "@/types/node";
-import { createNodeStoreItem, updateNodeStoreItem } from "@/lib/node-factories";
+import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction, CreateNodeInput, UpdateNodeInput } from "@/types/node";
+import { createNodeStoreItem, updateNodeStoreItem, generateId } from "@/lib/node-factories";
 
 interface NodeStoreState {
   nodes: NodeStoreItem[];
+  activityLogs: NodeActivityEntry[];
   hydrated: boolean;
 }
 
@@ -15,6 +16,7 @@ interface NodeStoreActions {
   removeNode: (id: string) => void;
   reorderSiblings: (parentId: string | null, workspaceId: string, orderedIds: string[]) => void;
   getWorkspaceNodes: (workspaceId: string) => NodeStoreItem[];
+  getWorkspaceActivityLogs: (workspaceId: string) => NodeActivityEntry[];
 }
 
 type NodeStore = NodeStoreState & NodeStoreActions;
@@ -435,8 +437,37 @@ const SEED_NODES: NodeStoreItem[] = [
   c("sd-case-youtube", "sd-case", SD, "Video Streaming Platform",   3, { status: "not_started", confidence: null }),
 ];
 
+function deriveSeedActivityLogs(nodes: NodeStoreItem[]): NodeActivityEntry[] {
+  const logs: NodeActivityEntry[] = [];
+  for (const node of nodes) {
+    logs.push({
+      id: generateId(),
+      nodeId: node.id,
+      workspaceId: node.workspaceId,
+      action: "created",
+      timestamp: node.createdAt,
+    });
+    if (node.lastReviewedAt) {
+      const action: NodeActivityAction =
+        node.status === "done" ? "marked_done"
+        : node.status === "in_progress" ? "marked_in_progress"
+        : node.status === "not_started" ? "marked_not_started"
+        : "reviewed";
+      logs.push({
+        id: generateId(),
+        nodeId: node.id,
+        workspaceId: node.workspaceId,
+        action,
+        timestamp: node.lastReviewedAt,
+      });
+    }
+  }
+  return logs;
+}
+
 export const useNodeStore = create<NodeStore>((set, get) => ({
   nodes: SEED_NODES,
+  activityLogs: deriveSeedActivityLogs(SEED_NODES),
   hydrated: true,
 
   addNode: (input) => {
@@ -445,14 +476,57 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
     );
     const orderIndex = siblings.length;
     const node = createNodeStoreItem(input, orderIndex);
-    set((state) => ({ nodes: [...state.nodes, node] }));
+    const now = new Date().toISOString();
+    const log: NodeActivityEntry = {
+      id: generateId(),
+      nodeId: node.id,
+      workspaceId: node.workspaceId,
+      action: "created",
+      timestamp: now,
+    };
+    set((state) => ({
+      nodes: [...state.nodes, node],
+      activityLogs: [...state.activityLogs, log],
+    }));
     return node.id;
   },
 
   updateNode: (id, input) => {
-    set((state) => ({
-      nodes: state.nodes.map((n) => (n.id === id ? updateNodeStoreItem(n, input) : n)),
-    }));
+    set((state) => {
+      const existing = state.nodes.find((n) => n.id === id);
+      if (!existing) return state;
+
+      const now = new Date().toISOString();
+      const logs: NodeActivityEntry[] = [];
+
+      if (input.status !== undefined && input.status !== existing.status) {
+        const action: NodeActivityAction =
+          input.status === "done" ? "marked_done"
+          : input.status === "in_progress" ? "marked_in_progress"
+          : "marked_not_started";
+        logs.push({
+          id: generateId(),
+          nodeId: id,
+          workspaceId: existing.workspaceId,
+          action,
+          timestamp: now,
+        });
+      }
+      if (input.confidence !== undefined && input.confidence !== existing.confidence) {
+        logs.push({
+          id: generateId(),
+          nodeId: id,
+          workspaceId: existing.workspaceId,
+          action: "confidence_changed",
+          timestamp: now,
+        });
+      }
+
+      return {
+        nodes: state.nodes.map((n) => (n.id === id ? updateNodeStoreItem(n, input) : n)),
+        activityLogs: [...state.activityLogs, ...logs],
+      };
+    });
   },
 
   removeNode: (id) => {
@@ -482,5 +556,9 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
 
   getWorkspaceNodes: (workspaceId) => {
     return get().nodes.filter((n) => n.workspaceId === workspaceId);
+  },
+
+  getWorkspaceActivityLogs: (workspaceId) => {
+    return get().activityLogs.filter((l) => l.workspaceId === workspaceId);
   },
 }));
