@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, ArrowLeftIcon, Edit02Icon, Loading02Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, ArrowLeftIcon, Edit02Icon, Loading02Icon, PieChart09Icon } from "@hugeicons/core-free-icons";
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -182,6 +182,16 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
             <span>{progress}%</span>
             <Progress value={progress} className="h-1.5 w-16" />
           </span>
+          <Button
+            size="sm"
+            variant="outline"
+            asChild
+          >
+            <Link href={`/workspaces/${workspaceId}/dashboard`}>
+              <HugeiconsIcon icon={PieChart09Icon} />
+              Dashboard
+            </Link>
+          </Button>
           <Button
             size="sm"
             variant="outline"
