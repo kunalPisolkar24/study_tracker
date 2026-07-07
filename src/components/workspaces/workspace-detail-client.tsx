@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
-import { SortableTree } from "@/components/workspaces/sortable-tree";
+import { SortableTree } from "@/components/tree/sortable-tree";
 import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
 import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
 import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
