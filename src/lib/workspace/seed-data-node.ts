@@ -417,8 +417,18 @@ const SEED_NODES: NodeStoreItem[] = [
   c("sd-case-youtube", "sd-case", SD, "Video Streaming Platform",   3, { status: "not_started", confidence: null }),
 ];
 
+const SPREAD_START = new Date("2026-04-01");
+const SPREAD_END = new Date("2026-06-28");
+const SPREAD_DAYS = Math.max(1, Math.round((SPREAD_END.getTime() - SPREAD_START.getTime()) / 86_400_000));
+
 function deriveSeedActivityLogs(nodes: NodeStoreItem[]): NodeActivityEntry[] {
   const logs: NodeActivityEntry[] = [];
+
+  const doneNodes = nodes
+    .filter((n) => n.status === "done" && n.lastReviewedAt)
+    .sort((a, b) => a.id.localeCompare(b.id));
+  const doneCount = doneNodes.length;
+
   for (const node of nodes) {
     logs.push({
       id: generateId(),
@@ -427,11 +437,24 @@ function deriveSeedActivityLogs(nodes: NodeStoreItem[]): NodeActivityEntry[] {
       action: "created",
       timestamp: node.createdAt,
     });
-    if (node.lastReviewedAt && node.status) {
+
+    if (!node.lastReviewedAt || !node.status) continue;
+
+    if (node.status === "done") {
+      const idx = doneNodes.indexOf(node);
+      const offset = Math.round(doneCount > 1 ? (idx / (doneCount - 1)) * SPREAD_DAYS : 0);
+      const ts = new Date(SPREAD_START);
+      ts.setDate(ts.getDate() + offset);
+      logs.push({
+        id: generateId(),
+        nodeId: node.id,
+        workspaceId: node.workspaceId,
+        action: "marked_done",
+        timestamp: ts.toISOString(),
+      });
+    } else {
       const action: NodeActivityAction =
-        node.status === "done" ? "marked_done"
-        : node.status === "in_progress" ? "marked_in_progress"
-        : "marked_not_started";
+        node.status === "in_progress" ? "marked_in_progress" : "marked_not_started";
       logs.push({
         id: generateId(),
         nodeId: node.id,
