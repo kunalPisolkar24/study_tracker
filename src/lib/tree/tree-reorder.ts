@@ -10,6 +10,7 @@ export interface IntoFolderDragTarget {
 
 export type ReorderResult = OrderedDragTarget;
 
+/** Reorders `allChildrenIds` by inserting `draggedIds` at `insertionIndex`. */
 export function computeOrderedReorder(
   allChildrenIds: string[],
   draggedIds: string[],
@@ -26,6 +27,7 @@ export function computeOrderedReorder(
   return { parentId: null, childIds: newOrder };
 }
 
+/** Moves `draggedIds` to the end of `allChildrenIds` (into-folder drop). */
 export function computeIntoFolderReorder(
   allChildrenIds: string[],
   draggedIds: string[],
@@ -37,6 +39,7 @@ export function computeIntoFolderReorder(
   return { parentId: null, childIds: newOrder };
 }
 
+/** Maps a headless-tree reorder result to a `{ parentId, orderedChildIds }` pair. */
 export function compileReorderResult(
   parentItemId: string,
   virtualRootId: string,
