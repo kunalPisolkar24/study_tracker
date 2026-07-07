@@ -1,4 +1,4 @@
-import { BookOpen01Icon, Folders, LayoutGrid } from "@hugeicons/core-free-icons";
+import { BookOpen01Icon, Folder03Icon, LayoutGrid } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
 
 export interface NavItem {
@@ -16,6 +16,6 @@ export const mainNavItems: NavItem[] = [
   {
     title: "Groups",
     href: "/groups",
-    icon: Folders,
+    icon: Folder03Icon,
   },
 ];
