@@ -542,16 +542,53 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   },
 
   reorderSiblings: (parentId, workspaceId, orderedIds) => {
-    set((state) => ({
-      nodes: state.nodes.map((node) => {
+    set((state) => {
+      const reorderIndex = new Map<string, number>();
+      orderedIds.forEach((id, i) => reorderIndex.set(id, i));
+
+      const reordered = new Set(orderedIds);
+
+      const intermediate = state.nodes.map((node) => {
         if (node.workspaceId !== workspaceId) return node;
-        const newIndex = orderedIds.indexOf(node.id);
-        if (newIndex !== -1) {
-          return { ...node, parentId, orderIndex: newIndex };
+        const newOrder = reorderIndex.get(node.id);
+        if (newOrder !== undefined) {
+          return { ...node, parentId, orderIndex: newOrder };
         }
         return node;
-      }),
-    }));
+      });
+
+      const parentBuckets = new Map<string | null, Array<{ id: string; orderIndex: number }>>();
+      for (const node of intermediate) {
+        if (node.workspaceId !== workspaceId) continue;
+        if (reordered.has(node.id)) continue;
+        const key = node.parentId;
+        if (!parentBuckets.has(key)) parentBuckets.set(key, []);
+        parentBuckets.get(key)!.push({ id: node.id, orderIndex: node.orderIndex });
+      }
+
+      for (const [, siblings] of parentBuckets) {
+        siblings.sort((a, b) => a.orderIndex - b.orderIndex);
+      }
+
+      const compactIndex = new Map<string, number>();
+      for (const [, siblings] of parentBuckets) {
+        for (let i = 0; i < siblings.length; i++) {
+          compactIndex.set(siblings[i].id, i);
+        }
+      }
+
+      return {
+        nodes: intermediate.map((node) => {
+          if (node.workspaceId !== workspaceId) return node;
+          if (reordered.has(node.id)) return node;
+          const compact = compactIndex.get(node.id);
+          if (compact !== undefined && compact !== node.orderIndex) {
+            return { ...node, orderIndex: compact };
+          }
+          return node;
+        }),
+      };
+    });
   },
 
   getWorkspaceNodes: (workspaceId) => {
