@@ -125,8 +125,10 @@ export const nodeRepository = {
       const parentVal = u.parentId === null ? "NULL" : `'${u.parentId}'`;
       return `WHEN id = '${u.id}' THEN ${parentVal}::uuid`;
     });
+    const idPlaceholders = updates.map((_, i) => `$${i + 1}`).join(",");
+    const userIdPlaceholder = `$${updates.length + 1}`;
     await prisma.$executeRawUnsafe(
-      `UPDATE "Node" SET "orderIndex" = CASE ${cases.join(" ")} END, "parentId" = CASE ${parentCases.join(" ")} END WHERE id IN (${updates.map(() => "?").join(",")}) AND "userId" = ?`,
+      `UPDATE "Node" SET "orderIndex" = CASE ${cases.join(" ")} END, "parentId" = CASE ${parentCases.join(" ")} END WHERE id IN (${idPlaceholders}) AND "userId" = ${userIdPlaceholder}`,
       ...updates.map((u) => u.id),
       userId,
     );
