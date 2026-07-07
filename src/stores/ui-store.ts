@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 
-export type NavPage = "dashboard" | "topics";
+export type NavPage = "workspaces" | "groups";
 
 interface UIState {
   activeNav: NavPage;
@@ -10,6 +10,6 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  activeNav: "dashboard",
+  activeNav: "workspaces",
   setActiveNav: (nav) => set({ activeNav: nav }),
 }));

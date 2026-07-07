@@ -1,8 +1,9 @@
 "use client";
 
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { Input } from "@/components/ui/input";
 
 interface PasswordInputProps extends Omit<React.ComponentProps<"input">, "type"> {
@@ -35,9 +36,9 @@ function PasswordInput({
           aria-label={showPassword ? "Hide password" : "Show password"}
         >
           {showPassword ? (
-            <EyeOff className="h-4 w-4" />
+            <HugeiconsIcon icon={ViewOffIcon} className="h-4 w-4" />
           ) : (
-            <Eye className="h-4 w-4" />
+            <HugeiconsIcon icon={ViewIcon} className="h-4 w-4" />
           )}
         </button>
       )}
