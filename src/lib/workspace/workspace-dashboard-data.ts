@@ -40,6 +40,7 @@ const CONFIDENCE_LABELS: Record<string, string> = {
 function computeActivityDateMap(logs: NodeActivityEntry[]): Map<string, number> {
   const map = new Map<string, number>();
   for (const log of logs) {
+    if (log.action !== "marked_done") continue;
     const dateStr = toDateStr(new Date(log.timestamp));
     map.set(dateStr, (map.get(dateStr) ?? 0) + 1);
   }
@@ -47,21 +48,21 @@ function computeActivityDateMap(logs: NodeActivityEntry[]): Map<string, number> 
 }
 
 function computeDoneOverTime(logs: NodeActivityEntry[]): { date: string; count: number }[] {
-  const markedDone = logs
-    .filter((l) => l.action === "marked_done")
-    .map((l) => toDateStr(new Date(l.timestamp)));
-
+  const now = new Date();
   const dateCounts = new Map<string, number>();
-  for (const dateStr of markedDone) {
+  for (const log of logs) {
+    if (log.action !== "marked_done") continue;
+    const dateStr = toDateStr(new Date(log.timestamp));
     dateCounts.set(dateStr, (dateCounts.get(dateStr) ?? 0) + 1);
   }
 
-  const sortedDates = Array.from(dateCounts.keys()).sort();
-  let cumulative = 0;
-  return sortedDates.map((date) => {
-    cumulative += dateCounts.get(date) ?? 0;
-    return { date, count: cumulative };
-  });
+  const result: { date: string; count: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    result.push({ date: toDateStr(d), count: dateCounts.get(toDateStr(d)) ?? 0 });
+  }
+  return result;
 }
 
 function computeStatusBreakdown(nodes: NodeStoreItem[]): { name: string; value: number; color: string; label: string }[] {
