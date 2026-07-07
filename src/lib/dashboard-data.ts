@@ -1,7 +1,8 @@
 import type { TopicStoreItem } from "@/types/topics";
 import { getAllProblems } from "@/lib/topic-utils";
 import { toDateStr } from "@/lib/date-utils";
-import { countConsecutiveDays } from "@/lib/streak-utils";
+import { computeStreaks, computeHeatmap } from "@/lib/streak-utils";
+import type { HeatmapEntry } from "@/lib/streak-utils";
 
 export interface DifficultyStats {
   solved: number;
@@ -20,11 +21,6 @@ export interface RecentActivityEntry {
   difficulty: "EASY" | "MEDIUM" | "HARD";
   solvedAt: string;
   topic: string;
-}
-
-export interface HeatmapEntry {
-  date: string;
-  count: number;
 }
 
 export interface WeeklySolvedEntry {
@@ -114,29 +110,6 @@ function computeWeeklySolved(now: Date, solveDateCounts: Map<string, number>): W
   return weekly;
 }
 
-function computeStreaks(solveDateSet: Set<string>, now: Date): { streak: number; maxStreak: number } {
-  const streak = countConsecutiveDays(solveDateSet, now, "backward");
-  let maxStreak = 0;
-  const yearStart = new Date(now.getFullYear(), 0, 1);
-  const current = new Date(yearStart);
-  while (current <= now) {
-    const s = countConsecutiveDays(solveDateSet, current, "forward");
-    if (s > maxStreak) maxStreak = s;
-    current.setDate(current.getDate() + (s || 1));
-  }
-  return { streak, maxStreak };
-}
-
-function computeHeatmap(now: Date, solveDateCounts: Map<string, number>): HeatmapEntry[] {
-  const heatmap: HeatmapEntry[] = [];
-  const start = new Date(now.getFullYear(), 0, 1);
-  start.setFullYear(start.getFullYear() - 1);
-  for (let d = new Date(start); d <= now; d.setDate(d.getDate() + 1)) {
-    heatmap.push({ date: toDateStr(d), count: solveDateCounts.get(toDateStr(d)) ?? 0 });
-  }
-  return heatmap;
-}
-
 function computeRecentActivity(
   solvedProblems: { problem: TopicStoreItem["problems"][number]; topicName: string }[]
 ): RecentActivityEntry[] {
@@ -159,6 +132,7 @@ function computeRecentActivity(
     .slice(0, 10);
 }
 
+/** Aggregates topic problems into a full dashboard summary (streak, heatmap, weekly, breakdowns). */
 export function computeDashboardData(topics: TopicStoreItem[]): DashboardData {
   const now = new Date();
   const todayStr = toDateStr(now);

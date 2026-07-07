@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 import { toDateStr } from "@/lib/date-utils";
-import { countConsecutiveDays } from "@/lib/streak-utils";
+import { computeStreaks, computeHeatmap } from "@/lib/streak-utils";
 import {
   createActivityLog,
   findRecentActivity,
@@ -53,6 +53,7 @@ export async function logActivity(
   }
 }
 
+/** Fetches the most recent solved problems for the current user. */
 export async function getRecentActivity(
   limit: number = 10
 ): Promise<RecentActivityEntry[]> {
@@ -78,6 +79,7 @@ export async function getRecentActivity(
   }
 }
 
+/** Returns heatmap entries for the current user spanning the past 12 months. */
 export async function getHeatmapData(): Promise<HeatmapEntry[]> {
   try {
     const session = await auth();
@@ -93,14 +95,7 @@ export async function getHeatmapData(): Promise<HeatmapEntry[]> {
       countMap.set(toDateStr(new Date(row.date)), Number(row.count));
     }
 
-    const heatmap: HeatmapEntry[] = [];
-    for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + 1)) {
-      heatmap.push({
-        date: toDateStr(d),
-        count: countMap.get(toDateStr(d)) ?? 0,
-      });
-    }
-    return heatmap;
+    return computeHeatmap(now, countMap);
   } catch (error) {
     logger.error("Failed to get heatmap data", {
       error: error instanceof Error ? error.message : String(error),
@@ -121,15 +116,7 @@ export async function getStreakData(): Promise<StreakData> {
     if (dates.length === 0) return { streak: 0, maxStreak: 0 };
 
     const dateSet = new Set(dates.map((d) => toDateStr(d)));
-    const streak = countConsecutiveDays(dateSet, now, "backward");
-
-    let maxStreak = 0;
-    const current = new Date(since);
-    while (current <= now) {
-      const s = countConsecutiveDays(dateSet, current, "forward");
-      if (s > maxStreak) maxStreak = s;
-      current.setDate(current.getDate() + (s || 1));
-    }
+    const { streak, maxStreak } = computeStreaks(dateSet, now);
 
     return { streak, maxStreak };
   } catch (error) {

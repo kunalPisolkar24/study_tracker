@@ -1,11 +1,7 @@
 import type { NodeStoreItem, NodeActivityEntry } from "@/types/node";
 import { toDateStr } from "@/lib/date-utils";
-import { countConsecutiveDays } from "@/lib/streak-utils";
-
-export interface HeatmapEntry {
-  date: string;
-  count: number;
-}
+import { computeStreaks, computeHeatmap } from "@/lib/streak-utils";
+import type { HeatmapEntry } from "@/lib/streak-utils";
 
 export interface WorkspaceDashboardData {
   heatmap: HeatmapEntry[];
@@ -100,6 +96,7 @@ function computeConfidenceBreakdown(nodes: NodeStoreItem[]): { name: string; val
     }));
 }
 
+/** Aggregates workspace nodes and activity logs into dashboard data (heatmap, streaks, breakdowns). */
 export function computeWorkspaceDashboardData(
   nodes: NodeStoreItem[],
   logs: NodeActivityEntry[],
@@ -108,24 +105,8 @@ export function computeWorkspaceDashboardData(
   const activityMap = computeActivityDateMap(logs);
   const activityDateSet = new Set(activityMap.keys());
 
-  const heatmap: HeatmapEntry[] = [];
-  const start = new Date(now.getFullYear(), 0, 1);
-  start.setFullYear(start.getFullYear() - 1);
-  for (let d = new Date(start); d <= now; d.setDate(d.getDate() + 1)) {
-    const dateStr = toDateStr(d);
-    heatmap.push({ date: dateStr, count: activityMap.get(dateStr) ?? 0 });
-  }
-
-  const streak = countConsecutiveDays(activityDateSet, now, "backward");
-
-  let maxStreak = 0;
-  const yearStart = new Date(now.getFullYear(), 0, 1);
-  const current = new Date(yearStart);
-  while (current <= now) {
-    const s = countConsecutiveDays(activityDateSet, current, "forward");
-    if (s > maxStreak) maxStreak = s;
-    current.setDate(current.getDate() + (s || 1));
-  }
+  const heatmap = computeHeatmap(now, activityMap);
+  const { streak, maxStreak } = computeStreaks(activityDateSet, now);
 
   return {
     heatmap,

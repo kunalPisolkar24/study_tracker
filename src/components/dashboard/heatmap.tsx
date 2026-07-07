@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toDateStr } from "@/lib/date-utils";
-import type { HeatmapEntry } from "@/lib/dashboard-data";
+import type { HeatmapEntry } from "@/lib/streak-utils";
 
 interface HeatmapProps {
   data: HeatmapEntry[];
