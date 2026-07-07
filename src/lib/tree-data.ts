@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useCallback } from "react";
 import { useTree } from "@headless-tree/react";
 import {
   syncDataLoaderFeature,
@@ -12,71 +12,44 @@ import {
   type ItemInstance,
 } from "@headless-tree/core";
 import type { NodeStoreItem } from "@/types/node";
+import {
+  buildTreeItems,
+  createDataLoader,
+  VIRTUAL_ROOT,
+  type HeadlessItemData,
+} from "@/lib/tree/tree-adapter";
+import { compileReorderResult } from "@/lib/tree/tree-reorder";
 
-export const VIRTUAL_ROOT = "__virtual-root__";
-const MAX_INLINE_DEPTH = 2;
+export { VIRTUAL_ROOT };
+
+export const MAX_INLINE_DEPTH = 2;
 const INDENT = 16;
-
-interface HeadlessItem {
-  name: string;
-  children?: string[];
-}
-
-function buildItems(nodes: NodeStoreItem[]): Record<string, HeadlessItem> {
-  const sorted = [...nodes].sort((a, b) => a.orderIndex - b.orderIndex);
-  const result: Record<string, HeadlessItem> = {};
-
-  const nodeIds = new Set(nodes.map((n) => n.id));
-
-  const topLevelIds = sorted
-    .filter((n) => n.parentId === null || !nodeIds.has(n.parentId))
-    .map((n) => n.id);
-  result[VIRTUAL_ROOT] = { name: "", children: topLevelIds };
-
-  for (const node of sorted) {
-    result[node.id] = { name: node.title, children: [] };
-  }
-
-  for (const node of sorted) {
-    if (node.parentId && result[node.parentId]) {
-      result[node.parentId].children!.push(node.id);
-    }
-  }
-
-  return result;
-}
 
 export function useWorkspaceTree(
   workspaceNodes: NodeStoreItem[],
   onReorder: (parentId: string | null, orderedChildIds: string[]) => void,
   onDrillIn: (nodeId: string) => void,
 ) {
-  const items = useMemo(() => buildItems(workspaceNodes), [workspaceNodes]);
+  const items = useMemo(() => buildTreeItems(workspaceNodes), [workspaceNodes]);
 
-  const dataLoader = useMemo(
-    () => ({
-      getItem: (itemId: string) =>
-        items[itemId] ?? { name: itemId, children: [] },
-      getChildren: (itemId: string) =>
-        items[itemId]?.children ?? [],
-    }),
-    [items],
-  );
+  const dataLoader = useMemo(() => createDataLoader(items), [items]);
 
   const onReorderRef = useRef(onReorder);
   const onDrillInRef = useRef(onDrillIn);
 
-  const tree = useTree<HeadlessItem>({
+  const isFolder = useCallback((item: ItemInstance<HeadlessItemData>) => {
+    const level = item.getItemMeta().level - 1;
+    if (level > MAX_INLINE_DEPTH) return false;
+    return (item.getItemData()?.children?.length ?? 0) > 0;
+  }, []);
+
+  const tree = useTree<HeadlessItemData>({
     initialState: {
       expandedItems: [],
     },
     rootItemId: VIRTUAL_ROOT,
     getItemName: (item) => item.getItemData().name,
-    isItemFolder: (item) => {
-      const level = item.getItemMeta().level - 1;
-      if (level > MAX_INLINE_DEPTH) return false;
-      return (item.getItemData()?.children?.length ?? 0) > 0;
-    },
+    isItemFolder: isFolder,
     onPrimaryAction: (item) => {
       const level = item.getItemMeta().level - 1;
       const hasChildren = (item.getItemData()?.children?.length ?? 0) > 0;
@@ -91,13 +64,13 @@ export function useWorkspaceTree(
       return target.item.isFolder();
     },
     onDrop: createOnDropHandler(
-      // eslint-disable-next-line react-hooks/refs
-      (parentItem: ItemInstance<HeadlessItem>, newChildrenIds: string[]) => {
-        const parentId =
-          parentItem.getId() === VIRTUAL_ROOT
-            ? null
-            : parentItem.getId();
-        onReorderRef.current(parentId, newChildrenIds);
+      (parentItem: ItemInstance<HeadlessItemData>, newChildrenIds: string[]) => {
+        const result = compileReorderResult(
+          parentItem.getId(),
+          VIRTUAL_ROOT,
+          newChildrenIds,
+        );
+        onReorderRef.current(result.parentId, result.orderedChildIds);
       },
     ),
     seperateDragHandle: true,
@@ -111,6 +84,10 @@ export function useWorkspaceTree(
   });
 
   useEffect(() => {
+    const dndState = tree.getState().dnd;
+    const isDragging =
+      dndState?.draggedItems && dndState.draggedItems.length > 0;
+    if (isDragging) return;
     tree.rebuildTree();
   }, [items, tree]);
 
