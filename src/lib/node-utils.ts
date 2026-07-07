@@ -2,31 +2,76 @@ import type { NodeStoreItem, TreeNode, BreadcrumbItem, NodeFilterState, NodeStat
 
 export const MAX_INLINE_DEPTH = 2;
 
-function sortNodes(nodes: NodeStoreItem[]): NodeStoreItem[] {
-  return [...nodes].sort((a, b) => a.orderIndex - b.orderIndex);
+interface TreeIndex {
+  childrenMap: Map<string | null, NodeStoreItem[]>;
+  nodeMap: Map<string, NodeStoreItem>;
 }
 
+/** Builds a children+node map index from a flat node list for O(1) lookups. */
+function buildTreeIndex(allNodes: NodeStoreItem[]): TreeIndex {
+  const childrenMap = new Map<string | null, NodeStoreItem[]>();
+  const nodeMap = new Map<string, NodeStoreItem>();
+  for (const node of allNodes) {
+    const parentId = node.parentId ?? null;
+    if (!childrenMap.has(parentId)) childrenMap.set(parentId, []);
+    childrenMap.get(parentId)!.push(node);
+    nodeMap.set(node.id, node);
+  }
+  for (const [, children] of childrenMap) {
+    children.sort((a, b) => a.orderIndex - b.orderIndex);
+  }
+  return { childrenMap, nodeMap };
+}
+
+/** Recursively collects leaf nodes (nodes without children) under `nodeId`. */
+function collectLeafDescendants(
+  childrenMap: Map<string | null, NodeStoreItem[]>,
+  nodeId: string,
+): NodeStoreItem[] {
+  const directChildren = childrenMap.get(nodeId);
+  if (!directChildren || directChildren.length === 0) return [];
+  const result: NodeStoreItem[] = [];
+  for (const child of directChildren) {
+    const grandChildren = childrenMap.get(child.id);
+    if (!grandChildren || grandChildren.length === 0) {
+      result.push(child);
+    } else {
+      result.push(...collectLeafDescendants(childrenMap, child.id));
+    }
+  }
+  return result;
+}
+
+/** Converts a flat node list into a nested `TreeNode[]` starting from `parentId`. */
 export function buildTree(
   allNodes: NodeStoreItem[],
   parentId: string | null,
   depth: number,
 ): TreeNode[] {
-  const children = sortNodes(allNodes.filter((n) => n.parentId === parentId));
-  return children.map((node) => ({
-    node,
-    depth,
-    children: buildTree(allNodes, node.id, depth + 1),
-  }));
-}
-
-export function getLeafDescendants(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
-  const directChildren = allNodes.filter((n) => n.parentId === nodeId);
-  if (directChildren.length === 0) {
-    return [allNodes.find((n) => n.id === nodeId)!].filter(Boolean);
+  const { childrenMap } = buildTreeIndex(allNodes);
+  function build(parent: string | null, d: number): TreeNode[] {
+    const children = childrenMap.get(parent) ?? [];
+    return children.map((node) => ({
+      node,
+      depth: d,
+      children: build(node.id, d + 1),
+    }));
   }
-  return directChildren.flatMap((child) => getLeafDescendants(allNodes, child.id));
+  return build(parentId, depth);
 }
 
+/** Returns all leaf descendants (or the node itself if it has no children). */
+export function getLeafDescendants(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
+  const { childrenMap, nodeMap } = buildTreeIndex(allNodes);
+  const directChildren = childrenMap.get(nodeId);
+  if (!directChildren || directChildren.length === 0) {
+    const self = nodeMap.get(nodeId);
+    return self ? [self] : [];
+  }
+  return collectLeafDescendants(childrenMap, nodeId);
+}
+
+/** Returns the count of total/done leaf nodes under `nodeId` with a percentage. */
 export function computeProgress(allNodes: NodeStoreItem[], nodeId: string): { total: number; done: number; percent: number } {
   const leaves = getLeafDescendants(allNodes, nodeId);
   const total = leaves.length;
@@ -39,6 +84,7 @@ export function computeWeakCount(allNodes: NodeStoreItem[], nodeId: string): num
   return leaves.filter((l) => l.confidence === "weak").length;
 }
 
+/** Walks up the parent chain from `nodeId` and returns ancestors from root to parent. */
 export function getAncestors(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
   const result: NodeStoreItem[] = [];
   let current = allNodes.find((n) => n.id === nodeId);
@@ -143,55 +189,50 @@ function nodeMatchesFilter(nodeId: string, filter: NodeFilterState, allNodes: No
   });
 }
 
+const STATUS_CLASSES: Record<string, string> = {
+  done: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400",
+  in_progress: "bg-amber-500/10 text-amber-600 border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400",
+};
+
+const STATUS_ICON_CLASSES: Record<string, string> = {
+  done: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
+  in_progress: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400",
+};
+
+const CONFIDENCE_CLASSES: Record<string, string> = {
+  strong: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400",
+  ok: "bg-blue-500/10 text-blue-600 border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-400",
+  weak: "bg-red-500/10 text-red-600 border-red-500/30 dark:bg-red-500/15 dark:text-red-400",
+};
+
+const CONFIDENCE_ICON_CLASSES: Record<string, string> = {
+  strong: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
+  ok: "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400",
+  weak: "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  not_started: "Not Started",
+  in_progress: "In Progress",
+  done: "Done",
+};
+
 export function deriveStatusLabel(status: NodeStatus | null): string {
-  if (!status) return "Not Started";
-  return status === "not_started" ? "Not Started" : status === "in_progress" ? "In Progress" : "Done";
+  return status ? STATUS_LABELS[status] : "Not Started";
 }
 
 export function deriveStatusClass(status: NodeStatus | null): string {
-  switch (status) {
-    case "done":
-      return "bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400";
-    case "in_progress":
-      return "bg-amber-500/10 text-amber-600 border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400";
-    default:
-      return "border-dashed text-muted-foreground";
-  }
+  return status ? STATUS_CLASSES[status] ?? "" : "border-dashed text-muted-foreground";
 }
 
 export function deriveConfidenceClass(confidence: NodeConfidence | null): string {
-  switch (confidence) {
-    case "strong":
-      return "bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400";
-    case "ok":
-      return "bg-blue-500/10 text-blue-600 border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-400";
-    case "weak":
-      return "bg-red-500/10 text-red-600 border-red-500/30 dark:bg-red-500/15 dark:text-red-400";
-    default:
-      return "border-dashed text-muted-foreground";
-  }
+  return confidence ? CONFIDENCE_CLASSES[confidence] ?? "" : "border-dashed text-muted-foreground";
 }
 
 export function deriveStatusIconClass(status: NodeStatus | null): string {
-  switch (status) {
-    case "done":
-      return "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400";
-    case "in_progress":
-      return "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400";
-    default:
-      return "bg-muted-foreground/10 text-muted-foreground";
-  }
+  return status ? STATUS_ICON_CLASSES[status] ?? "" : "bg-muted-foreground/10 text-muted-foreground";
 }
 
 export function deriveConfidenceIconClass(confidence: NodeConfidence | null): string {
-  switch (confidence) {
-    case "strong":
-      return "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400";
-    case "ok":
-      return "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400";
-    case "weak":
-      return "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400";
-    default:
-      return "bg-muted/50 text-muted-foreground/60";
-  }
+  return confidence ? CONFIDENCE_ICON_CLASSES[confidence] ?? "" : "bg-muted/50 text-muted-foreground/60";
 }
