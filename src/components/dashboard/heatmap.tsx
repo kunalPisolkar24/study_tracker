@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { FireIcon, ChampionIcon, SquareActivity } from "@hugeicons/core-free-icons";
 import {
   Card,
   CardContent,
@@ -16,13 +18,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { toDateStr } from "@/lib/date-utils";
-import type { HeatmapEntry } from "@/lib/dashboard-data";
+import { toDateStr } from "@/lib/shared/date-utils";
+import type { HeatmapEntry } from "@/lib/shared/streak-utils";
 
 interface HeatmapProps {
   data: HeatmapEntry[];
   streak: number;
   maxStreak: number;
+  title?: string;
+  description?: string;
 }
 
 const LEVELS = [
@@ -44,7 +48,7 @@ function getLevel(count: number) {
 
 const DAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"];
 
-export function Heatmap({ data, streak, maxStreak }: HeatmapProps) {
+export function Heatmap({ data, streak, maxStreak, title, description }: HeatmapProps) {
   const years = useMemo(() => {
     const set = new Set<number>();
     data.forEach((d) => set.add(new Date(d.date).getFullYear()));
@@ -104,8 +108,11 @@ export function Heatmap({ data, streak, maxStreak }: HeatmapProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>Solved in {selectedYear}</CardTitle>
-          <CardDescription>Problems solved per day</CardDescription>
+          <CardTitle className="flex items-center gap-2">
+            <HugeiconsIcon icon={SquareActivity} className="size-5 text-chart-2" />
+            {title ?? `Solved in ${selectedYear}`}
+          </CardTitle>
+          <CardDescription>{description ?? "Problems solved per day"}</CardDescription>
         </div>
         <Select value={selectedYear} onValueChange={setSelectedYear}>
           <SelectTrigger className="w-28">
@@ -180,13 +187,13 @@ export function Heatmap({ data, streak, maxStreak }: HeatmapProps) {
         </div>
         <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 rounded-md border border-border bg-muted/50 px-2 py-0.5 text-foreground">
-              <span className="leading-none">🔥</span>
+            <div className="flex items-center gap-1 rounded-md border border-orange-300 bg-orange-100 px-2 py-0.5 text-orange-800 dark:border-orange-700 dark:bg-orange-950 dark:text-orange-300">
+              <HugeiconsIcon icon={FireIcon} className="size-4" />
               <span className="font-medium">{streak}</span>
               <span className="text-muted-foreground">day streak</span>
             </div>
-            <div className="flex items-center gap-1 rounded-md border border-border bg-muted/50 px-2 py-0.5 text-foreground">
-              <span className="leading-none">🏆</span>
+            <div className="flex items-center gap-1 rounded-md border border-yellow-300 bg-yellow-100 px-2 py-0.5 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-950 dark:text-yellow-300">
+              <HugeiconsIcon icon={ChampionIcon} className="size-4" />
               <span className="font-medium">{maxStreak}</span>
               <span className="text-muted-foreground">max</span>
             </div>

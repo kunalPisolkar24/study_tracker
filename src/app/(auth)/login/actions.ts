@@ -1,7 +1,7 @@
 "use server";
 
-import { signIn } from "@/lib/auth";
-import { signInSchema } from "@/lib/schemas";
+import { signIn } from "@/lib/auth/auth";
+import { signInSchema } from "@/lib/auth/schemas";
 
 interface ActionResult {
   error: string | null;

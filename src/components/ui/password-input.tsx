@@ -3,7 +3,7 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ViewIcon, ViewOffIcon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import { Input } from "@/components/ui/input";
 
 interface PasswordInputProps extends Omit<React.ComponentProps<"input">, "type"> {

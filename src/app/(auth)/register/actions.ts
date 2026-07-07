@@ -1,10 +1,10 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/password";
+import { prisma } from "@/lib/shared/prisma";
+import { hashPassword } from "@/lib/auth/password";
 import { redirect } from "next/navigation";
-import { signUpSchema } from "@/lib/schemas";
-import { logger } from "@/lib/logger";
+import { signUpSchema } from "@/lib/auth/schemas";
+import { logger } from "@/lib/shared/logger";
 
 interface ActionResult {
   error: string | null;

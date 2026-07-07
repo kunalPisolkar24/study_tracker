@@ -1,7 +1,11 @@
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
-import { isAuthPage } from "@/lib/routes"
+import { auth } from "@/lib/auth/auth"
+
+const AUTH_PAGES = ["/login", "/register"] as const;
+function isAuthPage(pathname: string): boolean {
+  return AUTH_PAGES.some((page) => pathname.startsWith(page));
+}
 
 export default async function proxy(request: NextRequest) {
   const session = await auth()
@@ -19,5 +23,11 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/dashboard/:path*", "/topics", "/topics/:path*", "/login", "/register"],
+  matcher: [
+    "/dashboard", "/dashboard/:path*",
+    "/topics", "/topics/:path*",
+    "/workspaces", "/workspaces/:path*",
+    "/groups", "/groups/:path*",
+    "/login", "/register",
+  ],
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowUpDownIcon, Logout01Icon, MoonIcon, Sun01Icon } from "@hugeicons/core-free-icons";
+import { ArrowUpDownIcon, Logout01Icon, MoonIcon, PieChart09Icon, Sun01Icon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   Sidebar,
@@ -29,7 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useUIStore } from "@/stores/ui-store";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { NavItem } from "@/lib/navigation";
+import type { NavItem } from "@/lib/shared/navigation";
 
 interface AppSidebarUser {
   name: string;
@@ -53,6 +53,9 @@ function getInitials(name: string): string {
 
 export function AppSidebar({ user, navItems }: AppSidebarProps) {
   const pathname = usePathname();
+  const params = useParams();
+  const workspaceId = params?.workspaceId as string | undefined;
+  const isInWorkspace = workspaceId && pathname.startsWith(`/workspaces/${workspaceId}`);
   const setActiveNav = useUIStore((s) => s.setActiveNav);
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
@@ -87,6 +90,20 @@ export function AppSidebar({ user, navItems }: AppSidebarProps) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {isInWorkspace && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === `/workspaces/${workspaceId}/dashboard`}
+                    tooltip="Dashboard"
+                  >
+                    <Link href={`/workspaces/${workspaceId}/dashboard`}>
+                      <HugeiconsIcon icon={PieChart09Icon} />
+                      <span>Dashboard</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
