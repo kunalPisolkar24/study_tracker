@@ -30,14 +30,14 @@ export function GroupsPageClient() {
   } | null>(null);
 
   async function handleCreate(input: CreateWorkspaceGroupInput): Promise<boolean> {
-    addGroup(input);
+    await addGroup(input);
     toast.success("Group created successfully");
     return true;
   }
 
   async function handleEdit(input: CreateWorkspaceGroupInput): Promise<boolean> {
     if (!editTarget) return false;
-    updateGroup(editTarget.id, input);
+    await updateGroup(editTarget.id, input);
     setEditTarget(null);
     toast.success("Group updated successfully");
     return true;
@@ -48,9 +48,9 @@ export function GroupsPageClient() {
     if (g) setDeleteTarget({ id: g.id, name: g.name });
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleteTarget) return;
-    removeGroup(deleteTarget.id);
+    await removeGroup(deleteTarget.id);
     setDeleteTarget(null);
     toast.success("Group deleted successfully");
   }

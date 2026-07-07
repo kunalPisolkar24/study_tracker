@@ -94,7 +94,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
 
   const handleCreate = useCallback(
     async (title: string) => {
-      addNode({
+      await addNode({
         workspaceId,
         parentId: dialog.type === "create" ? dialog.parentId ?? null : null,
         title,
@@ -107,22 +107,22 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   const handleEdit = useCallback(
     async (title: string) => {
       if (dialog.type !== "edit") return false;
-      updateNode(dialog.target.id, { title });
+      await updateNode(dialog.target.id, { title });
       return true;
     },
     [updateNode, dialog],
   );
 
   const handleDetailSave = useCallback(
-    (id: string, updates: Parameters<typeof updateNode>[1]) => {
-      updateNode(id, updates);
+    async (id: string, updates: Parameters<typeof updateNode>[1]) => {
+      await updateNode(id, updates);
     },
     [updateNode],
   );
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => {
     if (dialog.type !== "delete") return;
-    removeNode(dialog.target.id);
+    await removeNode(dialog.target.id);
     if (focusedNodeId === dialog.target.id) {
       router.push(`/workspaces/${workspaceId}`);
     }
@@ -137,8 +137,8 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   );
 
   const handleReorder = useCallback(
-    (parentId: string | null, orderedChildIds: string[]) => {
-      reorderSiblings(parentId, workspaceId, orderedChildIds);
+    async (parentId: string | null, orderedChildIds: string[]) => {
+      await reorderSiblings(parentId, workspaceId, orderedChildIds);
     },
     [reorderSiblings, workspaceId],
   );

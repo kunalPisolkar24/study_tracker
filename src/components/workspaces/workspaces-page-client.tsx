@@ -70,14 +70,14 @@ export function WorkspacesPageClient() {
   }
 
   async function handleCreate(input: CreateWorkspaceInput): Promise<boolean> {
-    addWorkspace(input);
+    await addWorkspace(input);
     toast.success("Workspace created successfully");
     return true;
   }
 
   async function handleEdit(input: CreateWorkspaceInput): Promise<boolean> {
     if (!editTarget) return false;
-    updateWorkspace(editTarget.id, input);
+    await updateWorkspace(editTarget.id, input);
     setEditTarget(null);
     toast.success("Workspace updated successfully");
     return true;
@@ -88,9 +88,9 @@ export function WorkspacesPageClient() {
     if (w) setDeleteTarget({ id: w.id, name: w.name });
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleteTarget) return;
-    removeWorkspace(deleteTarget.id);
+    await removeWorkspace(deleteTarget.id);
     setDeleteTarget(null);
     toast.success("Workspace deleted successfully");
   }

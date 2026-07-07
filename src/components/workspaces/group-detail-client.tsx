@@ -49,25 +49,25 @@ export function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   }
 
   async function handleAddToGroup(workspaceId: string) {
-    reassignWorkspace(workspaceId, groupId);
+    await reassignWorkspace(workspaceId, groupId);
   }
 
   async function handleCreate(input: CreateWorkspaceInput): Promise<boolean> {
-    addWorkspace({ ...input, groupId });
+    await addWorkspace({ ...input, groupId });
     toast.success("Workspace created successfully");
     return true;
   }
 
   async function handleEdit(input: CreateWorkspaceInput): Promise<boolean> {
     if (!editTarget) return false;
-    updateWorkspace(editTarget.id, input);
+    await updateWorkspace(editTarget.id, input);
     setEditTarget(null);
     toast.success("Workspace updated successfully");
     return true;
   }
 
-  function handleDelete(id: string) {
-    removeWorkspace(id);
+  async function handleDelete(id: string) {
+    await removeWorkspace(id);
     toast.success("Workspace removed successfully");
   }
 
