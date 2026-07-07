@@ -1,7 +1,7 @@
 import type { NodeStoreItem, NodeActivityEntry } from "@/types/node";
-import { toDateStr } from "@/lib/date-utils";
-import { computeStreaks, computeHeatmap } from "@/lib/streak-utils";
-import type { HeatmapEntry } from "@/lib/streak-utils";
+import { toDateStr } from "@/lib/shared/date-utils";
+import { computeStreaks, computeHeatmap } from "@/lib/shared/streak-utils";
+import type { HeatmapEntry } from "@/lib/shared/streak-utils";
 
 export interface WorkspaceDashboardData {
   heatmap: HeatmapEntry[];

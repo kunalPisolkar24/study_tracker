@@ -2,13 +2,13 @@
 
 import { create } from "zustand";
 import type { WorkspaceStoreItem, WorkspaceGroupStoreItem } from "@/types/workspace";
-import type { CreateWorkspaceInput, CreateWorkspaceGroupInput } from "@/lib/workspace-schemas";
+import type { CreateWorkspaceInput, CreateWorkspaceGroupInput } from "@/lib/workspace/workspace-schemas";
 import {
   createWorkspaceStoreItem,
   updateWorkspaceStoreItem,
   createWorkspaceGroupStoreItem,
   updateWorkspaceGroupStoreItem,
-} from "@/lib/workspace-factories";
+} from "@/lib/workspace/workspace-factories";
 
 interface WorkspaceStoreState {
   workspaceGroups: WorkspaceGroupStoreItem[];

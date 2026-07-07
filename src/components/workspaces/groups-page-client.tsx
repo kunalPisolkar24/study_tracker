@@ -11,7 +11,7 @@ import { useWorkspaceStore } from "@/stores/workspace-store";
 import { GroupCard } from "@/components/workspaces/group-card";
 import { GroupFormDialog } from "@/components/workspaces/group-form-dialog";
 import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
-import type { CreateWorkspaceGroupInput } from "@/lib/workspace-schemas";
+import type { CreateWorkspaceGroupInput } from "@/lib/workspace/workspace-schemas";
 
 export function GroupsPageClient() {
   const router = useRouter();

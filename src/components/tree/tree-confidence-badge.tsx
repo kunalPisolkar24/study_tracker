@@ -1,12 +1,12 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import {
   getConfidenceIcon,
   getConfidenceLabel,
   getConfidenceClass,
-} from "@/lib/tree/tree-icons";
+} from "@/lib/workspace/tree/tree-icons";
 import type { NodeConfidence } from "@/types/node";
 
 interface TreeConfidenceBadgeProps {

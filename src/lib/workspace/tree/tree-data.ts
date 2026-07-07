@@ -17,8 +17,8 @@ import {
   createDataLoader,
   VIRTUAL_ROOT,
   type HeadlessItemData,
-} from "@/lib/tree/tree-adapter";
-import { compileReorderResult } from "@/lib/tree/tree-reorder";
+} from "@/lib/workspace/tree/tree-adapter";
+import { compileReorderResult } from "@/lib/workspace/tree/tree-reorder";
 
 export { VIRTUAL_ROOT };
 

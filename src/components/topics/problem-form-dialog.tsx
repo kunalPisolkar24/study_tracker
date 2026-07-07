@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
-import { createProblemSchema, updateProblemSchema } from "@/lib/schemas";
+import { createProblemSchema, updateProblemSchema } from "@/lib/topics/schemas";
 import { useFormDialog } from "@/components/topics/use-form-dialog";
 import type { SubTopicStoreItem } from "@/types/topics";
 

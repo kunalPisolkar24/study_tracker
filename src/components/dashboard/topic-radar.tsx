@@ -9,8 +9,8 @@ import {
   Tooltip,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CHART_COLORS } from "@/lib/constants";
-import type { TopicRadarEntry } from "@/lib/dashboard-data";
+import { CHART_COLORS } from "@/lib/shared/constants";
+import type { TopicRadarEntry } from "@/lib/topics/dashboard-data";
 
 interface TopicRadarProps {
   data: TopicRadarEntry[];

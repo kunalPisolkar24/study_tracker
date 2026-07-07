@@ -18,10 +18,10 @@ import { useTopicStore } from "@/stores/topic-store";
 import {
   filterTopics,
   paginateTopics,
-} from "@/lib/topic-utils";
-import { computeTopicCardViewModel } from "@/lib/topic-view-models";
-import { LAYOUT } from "@/lib/constants";
-import type { CreateTopicInput } from "@/lib/schemas";
+} from "@/lib/topics/topic-utils";
+import { computeTopicCardViewModel } from "@/lib/topics/topic-view-models";
+import { LAYOUT } from "@/lib/shared/constants";
+import type { CreateTopicInput } from "@/lib/topics/schemas";
 import { TopicCard } from "@/components/topics/topic-card";
 import { TopicSearch } from "@/components/topics/topic-search";
 import { TopicFormDialog } from "@/components/topics/topic-form-dialog";

@@ -1,16 +1,14 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { logger } from "@/lib/logger";
-import { prisma } from "@/lib/prisma";
-import { mapPrismaSubTopic } from "@/lib/mappers";
-import * as subTopicRepo from "@/lib/repositories/subtopic-repository";
-import * as topicRepo from "@/lib/repositories/topic-repository";
-import { createSubTopicSchema, updateSubTopicSchema } from "@/lib/schemas";
+import { auth } from "@/lib/auth/auth";
+import { logger } from "@/lib/shared/logger";
+import { prisma } from "@/lib/shared/prisma";
+import { mapPrismaSubTopic } from "@/lib/topics/mappers";
+import * as subTopicRepo from "@/lib/topics/repositories/subtopic-repository";
+import * as topicRepo from "@/lib/topics/repositories/topic-repository";
+import { createSubTopicSchema, updateSubTopicSchema } from "@/lib/topics/schemas";
 import type { SubTopicStoreItem } from "@/types/topics";
-import type { CreateSubTopicInput, UpdateSubTopicInput } from "@/lib/schemas";
-
-export type SubTopicRepository = typeof subTopicRepo;
+import type { CreateSubTopicInput, UpdateSubTopicInput } from "@/lib/topics/schemas";
 
 async function getUserId(): Promise<string | null> {
   const session = await auth();

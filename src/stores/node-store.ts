@@ -2,8 +2,8 @@
 
 import { create } from "zustand";
 import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction, CreateNodeInput, UpdateNodeInput } from "@/types/node";
-import { createNodeStoreItem, updateNodeStoreItem, generateId } from "@/lib/node-factories";
-import { SEED_NODES, deriveSeedActivityLogs } from "@/lib/seed-data-node";
+import { createNodeStoreItem, updateNodeStoreItem, generateId } from "@/lib/workspace/node-factories";
+import { SEED_NODES, deriveSeedActivityLogs } from "@/lib/workspace/seed-data-node";
 
 interface NodeStoreState {
   nodes: NodeStoreItem[];

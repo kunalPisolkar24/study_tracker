@@ -1,5 +1,5 @@
 import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction } from "@/types/node";
-import { generateId } from "@/lib/node-factories";
+import { generateId } from "@/lib/workspace/node-factories";
 
 function n(
   id: string,

@@ -22,8 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useWorkspaceStore } from "@/stores/workspace-store";
-import { createWorkspaceSchema, updateWorkspaceSchema } from "@/lib/workspace-schemas";
-import type { CreateWorkspaceInput } from "@/lib/workspace-schemas";
+import { createWorkspaceSchema, updateWorkspaceSchema } from "@/lib/workspace/workspace-schemas";
+import type { CreateWorkspaceInput } from "@/lib/workspace/workspace-schemas";
 
 interface WorkspaceFormDialogProps {
   mode: "create" | "edit";

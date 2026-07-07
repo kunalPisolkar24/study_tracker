@@ -22,8 +22,8 @@ import {
   MediumSignalIcon,
 } from "@hugeicons/core-free-icons";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { deriveStatusClass, deriveConfidenceClass } from "@/lib/node-utils";
+import { cn } from "@/lib/shared/utils";
+import { deriveStatusClass, deriveConfidenceClass } from "@/lib/workspace/node-utils";
 import type { NodeStoreItem, NodeStatus, NodeConfidence } from "@/types/node";
 
 interface NodeDetailDrawerProps {

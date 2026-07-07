@@ -1,13 +1,13 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { logger } from "@/lib/logger";
-import { findTopicsByUserId } from "@/lib/repositories/topic-repository";
-import { mapPrismaTopic } from "@/lib/mappers";
-import { computeDashboardData } from "@/lib/dashboard-data";
-import type { DashboardData } from "@/lib/dashboard-data";
+import { auth } from "@/lib/auth/auth";
+import { logger } from "@/lib/shared/logger";
+import { findTopicsByUserId } from "@/lib/topics/repositories/topic-repository";
+import { mapPrismaTopic } from "@/lib/topics/mappers";
+import { computeDashboardData } from "@/lib/topics/dashboard-data";
+import type { DashboardData } from "@/lib/topics/dashboard-data";
 
-export type { DashboardData } from "@/lib/dashboard-data";
+export type { DashboardData } from "@/lib/topics/dashboard-data";
 
 export async function getDashboardData(): Promise<DashboardData | null> {
   try {

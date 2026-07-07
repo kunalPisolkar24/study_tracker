@@ -1,21 +1,17 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { logger } from "@/lib/logger";
-import { logActivity } from "@/lib/services/activity-service";
+import { auth } from "@/lib/auth/auth";
+import { logger } from "@/lib/shared/logger";
+import { logActivity } from "@/lib/topics/services/activity-service";
 import type { ProblemStoreItem } from "@/types/topics";
-
-export type ActivityServiceForProblems = Pick<typeof import("@/lib/services/activity-service"), "logActivity">;
-import type { CreateProblemInput, UpdateProblemInput } from "@/lib/schemas";
+import type { CreateProblemInput, UpdateProblemInput } from "@/lib/topics/schemas";
 import {
   createProblemSchema,
   updateProblemSchema,
   updateProblemStatusSchema,
   updateProblemReviewCountSchema,
-} from "@/lib/schemas";
-import * as problemRepo from "@/lib/repositories/problem-repository";
-
-export type ProblemRepository = typeof problemRepo;
+} from "@/lib/topics/schemas";
+import * as problemRepo from "@/lib/topics/repositories/problem-repository";
 
 function mapProblem(p: problemRepo.ProblemScalarFields): ProblemStoreItem {
   return {
@@ -136,23 +132,6 @@ export async function updateProblemStatus(
     logger.error("Failed to update problem status", {
       problemId,
       status,
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return null;
-  }
-}
-
-export async function reorderProblem(
-  problemId: string,
-  sortOrder: number
-): Promise<ProblemStoreItem | null> {
-  try {
-    const problem = await problemRepo.updateProblemSortOrder(problemId, sortOrder);
-    return mapProblem(problem);
-  } catch (error) {
-    logger.error("Failed to reorder problem", {
-      problemId,
-      sortOrder,
       error: error instanceof Error ? error.message : String(error),
     });
     return null;

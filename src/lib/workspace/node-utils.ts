@@ -61,7 +61,7 @@ export function buildTree(
 }
 
 /** Returns all leaf descendants (or the node itself if it has no children). */
-export function getLeafDescendants(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
+function getLeafDescendants(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
   const { childrenMap, nodeMap } = buildTreeIndex(allNodes);
   const directChildren = childrenMap.get(nodeId);
   if (!directChildren || directChildren.length === 0) {
@@ -79,13 +79,8 @@ export function computeProgress(allNodes: NodeStoreItem[], nodeId: string): { to
   return { total, done, percent: total > 0 ? Math.round((done / total) * 100) : 0 };
 }
 
-export function computeWeakCount(allNodes: NodeStoreItem[], nodeId: string): number {
-  const leaves = getLeafDescendants(allNodes, nodeId);
-  return leaves.filter((l) => l.confidence === "weak").length;
-}
-
 /** Walks up the parent chain from `nodeId` and returns ancestors from root to parent. */
-export function getAncestors(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
+function getAncestors(allNodes: NodeStoreItem[], nodeId: string): NodeStoreItem[] {
   const result: NodeStoreItem[] = [];
   let current = allNodes.find((n) => n.id === nodeId);
   while (current?.parentId) {
@@ -133,22 +128,8 @@ export function getBreadcrumb(
   return items;
 }
 
-export function computeDerivedStatus(allNodes: NodeStoreItem[], nodeId: string): NodeStatus {
-  const leaves = getLeafDescendants(allNodes, nodeId);
-  if (leaves.length === 0) return "not_started";
-  const allDone = leaves.every((l) => l.status === "done");
-  const allNotStarted = leaves.every((l) => l.status === "not_started" || l.status === null);
-  if (allDone) return "done";
-  if (allNotStarted) return "not_started";
-  return "in_progress";
-}
-
-export function isLeaf(allNodes: NodeStoreItem[], nodeId: string): boolean {
+function isLeaf(allNodes: NodeStoreItem[], nodeId: string): boolean {
   return !allNodes.some((n) => n.parentId === nodeId);
-}
-
-export function shouldDrillIn(depth: number): boolean {
-  return depth > MAX_INLINE_DEPTH;
 }
 
 export function applyFilterAndSort(
@@ -194,32 +175,11 @@ const STATUS_CLASSES: Record<string, string> = {
   in_progress: "bg-amber-500/10 text-amber-600 border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400",
 };
 
-const STATUS_ICON_CLASSES: Record<string, string> = {
-  done: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
-  in_progress: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400",
-};
-
 const CONFIDENCE_CLASSES: Record<string, string> = {
   strong: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/15 dark:text-emerald-400",
   ok: "bg-blue-500/10 text-blue-600 border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-400",
   weak: "bg-red-500/10 text-red-600 border-red-500/30 dark:bg-red-500/15 dark:text-red-400",
 };
-
-const CONFIDENCE_ICON_CLASSES: Record<string, string> = {
-  strong: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
-  ok: "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400",
-  weak: "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  not_started: "Not Started",
-  in_progress: "In Progress",
-  done: "Done",
-};
-
-export function deriveStatusLabel(status: NodeStatus | null): string {
-  return status ? STATUS_LABELS[status] : "Not Started";
-}
 
 export function deriveStatusClass(status: NodeStatus | null): string {
   return status ? STATUS_CLASSES[status] ?? "" : "border-dashed text-muted-foreground";
@@ -227,12 +187,4 @@ export function deriveStatusClass(status: NodeStatus | null): string {
 
 export function deriveConfidenceClass(confidence: NodeConfidence | null): string {
   return confidence ? CONFIDENCE_CLASSES[confidence] ?? "" : "border-dashed text-muted-foreground";
-}
-
-export function deriveStatusIconClass(status: NodeStatus | null): string {
-  return status ? STATUS_ICON_CLASSES[status] ?? "" : "bg-muted-foreground/10 text-muted-foreground";
-}
-
-export function deriveConfidenceIconClass(confidence: NodeConfidence | null): string {
-  return confidence ? CONFIDENCE_ICON_CLASSES[confidence] ?? "" : "bg-muted/50 text-muted-foreground/60";
 }

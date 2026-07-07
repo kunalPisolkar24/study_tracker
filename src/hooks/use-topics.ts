@@ -6,7 +6,7 @@ import type {
   UpdateSubTopicInput,
   CreateProblemInput,
   UpdateProblemInput,
-} from "@/lib/schemas";
+} from "@/lib/topics/schemas";
 
 export function useTopics() {
   return useTopicStore((s) => s.topics);

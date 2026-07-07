@@ -19,7 +19,7 @@ import { useWorkspaceStore } from "@/stores/workspace-store";
 import { WorkspaceCard } from "@/components/workspaces/workspace-card";
 import { WorkspaceFormDialog } from "@/components/workspaces/workspace-form-dialog";
 import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
-import type { CreateWorkspaceInput } from "@/lib/workspace-schemas";
+import type { CreateWorkspaceInput } from "@/lib/workspace/workspace-schemas";
 
 const PAGE_SIZE = 6;
 const DEBOUNCE_MS = 300;

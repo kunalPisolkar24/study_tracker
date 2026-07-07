@@ -29,7 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { useUIStore } from "@/stores/ui-store";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { NavItem } from "@/lib/navigation";
+import type { NavItem } from "@/lib/shared/navigation";
 
 interface AppSidebarUser {
   name: string;

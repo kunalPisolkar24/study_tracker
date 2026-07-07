@@ -1,4 +1,4 @@
-import { toDateStr } from "@/lib/date-utils";
+import { toDateStr } from "@/lib/shared/date-utils";
 
 export interface HeatmapEntry {
   date: string;

@@ -6,20 +6,20 @@ import { useTopicStore } from "@/stores/topic-store";
 import {
   computeTopicCardViewModel,
   computeSubtopicViewModel,
-} from "@/lib/topic-view-models";
+} from "@/lib/topics/topic-view-models";
 import {
   computeBatchChanges,
   updateProblemInDraft,
-} from "@/lib/topic-diff";
-import { moveSubTopicInArray } from "@/lib/topic-factories";
+} from "@/lib/topics/topic-diff";
+import { moveSubTopicInArray } from "@/lib/topics/topic-factories";
 import type {
   SubTopicStoreItem,
   ProblemStoreItem,
   TopicStoreItem,
 } from "@/types/topics";
-import * as topicService from "@/lib/services/topic-service";
-import * as subTopicService from "@/lib/services/subtopic-service";
-import * as problemService from "@/lib/services/problem-service";
+import * as topicService from "@/lib/topics/services/topic-service";
+import * as subTopicService from "@/lib/topics/services/subtopic-service";
+import * as problemService from "@/lib/topics/services/problem-service";
 
 type DialogState =
   | { type: "idle" }

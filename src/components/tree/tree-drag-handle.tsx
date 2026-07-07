@@ -2,7 +2,7 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { DragDropVerticalIcon } from "@hugeicons/core-free-icons";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 
 interface TreeDragHandleProps {
   getDragHandleProps: () => Record<string, unknown>;

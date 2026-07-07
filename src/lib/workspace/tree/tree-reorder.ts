@@ -1,14 +1,9 @@
-export interface OrderedDragTarget {
+interface OrderedDragTarget {
   parentId: string | null;
   childIds: string[];
 }
 
-export interface IntoFolderDragTarget {
-  parentId: string;
-  childIds: string[];
-}
-
-export type ReorderResult = OrderedDragTarget;
+type ReorderResult = OrderedDragTarget;
 
 /** Reorders `allChildrenIds` by inserting `draggedIds` at `insertionIndex`. */
 export function computeOrderedReorder(

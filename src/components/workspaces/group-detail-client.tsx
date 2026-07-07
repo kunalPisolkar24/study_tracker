@@ -11,7 +11,7 @@ import { useWorkspaceStore } from "@/stores/workspace-store";
 import { WorkspaceCard } from "@/components/workspaces/workspace-card";
 import { WorkspaceFormDialog } from "@/components/workspaces/workspace-form-dialog";
 import { AddWorkspaceDialog } from "@/components/workspaces/add-workspace-dialog";
-import type { CreateWorkspaceInput } from "@/lib/workspace-schemas";
+import type { CreateWorkspaceInput } from "@/lib/workspace/workspace-schemas";
 
 interface GroupDetailClientProps {
   groupId: string;

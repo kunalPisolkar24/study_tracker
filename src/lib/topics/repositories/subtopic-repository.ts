@@ -1,11 +1,11 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/shared/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 
 const subTopicInclude = {
   problems: { orderBy: { sortOrder: "asc" } },
 } satisfies Prisma.SubTopicInclude;
 
-export type SubTopicWithRelations = Prisma.SubTopicGetPayload<{ include: typeof subTopicInclude }>;
+type SubTopicWithRelations = Prisma.SubTopicGetPayload<{ include: typeof subTopicInclude }>;
 
 export async function createSubTopic(
   topicId: string,

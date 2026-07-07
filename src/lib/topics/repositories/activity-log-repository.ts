@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/shared/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 
-export const activityLogInclude = {
+const activityLogInclude = {
   problem: {
     include: {
       topic: { select: { name: true } },
@@ -9,7 +9,7 @@ export const activityLogInclude = {
   },
 } satisfies Prisma.ActivityLogInclude;
 
-export type ActivityLogWithProblem = Prisma.ActivityLogGetPayload<{
+type ActivityLogWithProblem = Prisma.ActivityLogGetPayload<{
   include: typeof activityLogInclude;
 }>;
 

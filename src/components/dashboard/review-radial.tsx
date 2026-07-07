@@ -1,7 +1,7 @@
 "use client";
 
 import { DonutChart } from "@/components/dashboard/donut-chart";
-import { CHART_COLORS } from "@/lib/constants";
+import { CHART_COLORS } from "@/lib/shared/constants";
 
 interface ReviewRadialProps {
   solved: number;

@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/shared/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 
-export const topicInclude = {
+const topicInclude = {
   subTopics: {
     orderBy: { sortOrder: "asc" },
     include: { problems: { orderBy: { sortOrder: "asc" } } },
@@ -12,7 +12,7 @@ export const topicInclude = {
   },
 } satisfies Prisma.TopicInclude;
 
-export type TopicWithRelations = Prisma.TopicGetPayload<{ include: typeof topicInclude }>;
+type TopicWithRelations = Prisma.TopicGetPayload<{ include: typeof topicInclude }>;
 
 export async function findTopicsByUserId(userId: string): Promise<TopicWithRelations[]> {
   return prisma.topic.findMany({

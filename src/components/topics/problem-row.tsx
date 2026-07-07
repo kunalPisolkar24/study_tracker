@@ -5,9 +5,9 @@ import { ArrowDown01Icon, ArrowUp01Icon, Delete02Icon, LinkSquare01Icon, PencilI
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { STATUS_CYCLE, STATUS_STYLES, DIFFICULTY_STYLES } from "@/lib/constants";
+import { STATUS_CYCLE, STATUS_STYLES, DIFFICULTY_STYLES } from "@/lib/shared/constants";
 import type { ProblemStoreItem } from "@/types/topics";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 
 function nextStatus(current: ProblemStoreItem["status"]): ProblemStoreItem["status"] {
   const idx = STATUS_CYCLE.indexOf(current);

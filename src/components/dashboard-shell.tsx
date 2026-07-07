@@ -6,7 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNav } from "@/components/top-nav";
 import { StoreHydrator } from "@/components/store-hydrator";
-import { mainNavItems } from "@/lib/navigation";
+import { mainNavItems } from "@/lib/shared/navigation";
 
 interface DashboardShellProps {
   children: ReactNode;

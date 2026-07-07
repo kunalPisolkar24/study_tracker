@@ -1,12 +1,12 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import {
   getStatusIcon,
   getStatusLabel,
   getStatusClass,
-} from "@/lib/tree/tree-icons";
+} from "@/lib/workspace/tree/tree-icons";
 import type { NodeStatus } from "@/types/node";
 
 interface TreeStatusBadgeProps {

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/shared/prisma";
 import type { $Enums } from "@/generated/prisma/client";
 
 export interface ProblemScalarFields {
@@ -143,16 +143,6 @@ export async function updateProblemReviewCount(
   return prisma.problem.update({
     where: { id },
     data: { reviewCount, lastReviewedAt: new Date() },
-  });
-}
-
-export async function updateProblemSortOrder(
-  id: string,
-  sortOrder: number
-): Promise<ProblemScalarFields> {
-  return prisma.problem.update({
-    where: { id },
-    data: { sortOrder },
   });
 }
 

@@ -9,7 +9,7 @@ import type {
   UpdateSubTopicInput,
   CreateProblemInput,
   UpdateProblemInput,
-} from "@/lib/schemas";
+} from "@/lib/topics/schemas";
 import {
   createTopicService,
   updateTopicService,
@@ -18,11 +18,11 @@ import {
   createProblemService,
   updateProblemService,
   moveProblemInArray,
-} from "@/lib/topic-factories";
-import * as topicService from "@/lib/services/topic-service";
-import * as subTopicService from "@/lib/services/subtopic-service";
-import * as problemService from "@/lib/services/problem-service";
-import { moveProblemBetweenContainers } from "@/lib/topic-diff";
+} from "@/lib/topics/topic-factories";
+import * as topicService from "@/lib/topics/services/topic-service";
+import * as subTopicService from "@/lib/topics/services/subtopic-service";
+import * as problemService from "@/lib/topics/services/problem-service";
+import { moveProblemBetweenContainers } from "@/lib/topics/topic-diff";
 
 interface TopicStoreState {
   topics: TopicStoreItem[];

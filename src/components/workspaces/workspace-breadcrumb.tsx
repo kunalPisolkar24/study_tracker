@@ -5,7 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ChevronRightIcon } from "@hugeicons/core-free-icons";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { BreadcrumbItem } from "@/types/node";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 
 interface WorkspaceBreadcrumbProps {
   items: BreadcrumbItem[];

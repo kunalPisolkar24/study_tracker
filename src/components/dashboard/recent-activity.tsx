@@ -8,10 +8,10 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { DIFFICULTY_STYLES } from "@/lib/constants";
-import { timeAgo } from "@/lib/date-utils";
-import type { RecentActivityEntry } from "@/lib/dashboard-data";
+import { cn } from "@/lib/shared/utils";
+import { DIFFICULTY_STYLES } from "@/lib/shared/constants";
+import { timeAgo } from "@/lib/shared/date-utils";
+import type { RecentActivityEntry } from "@/lib/topics/dashboard-data";
 
 interface RecentActivityProps {
   data: RecentActivityEntry[];

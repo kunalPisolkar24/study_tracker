@@ -10,7 +10,7 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import type { SubTopicStoreItem, ProblemStoreItem, SubtopicViewModel } from "@/types/topics";
 import { ProblemRow } from "@/components/topics/problem-row";
 

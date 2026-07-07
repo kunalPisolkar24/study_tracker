@@ -18,8 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { toDateStr } from "@/lib/date-utils";
-import type { HeatmapEntry } from "@/lib/streak-utils";
+import { toDateStr } from "@/lib/shared/date-utils";
+import type { HeatmapEntry } from "@/lib/shared/streak-utils";
 
 interface HeatmapProps {
   data: HeatmapEntry[];

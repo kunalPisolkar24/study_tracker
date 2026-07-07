@@ -4,11 +4,11 @@ import { usePathname, useParams } from "next/navigation";
 import { useMemo } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { mainNavItems } from "@/lib/navigation";
+import { mainNavItems } from "@/lib/shared/navigation";
 import { WorkspaceBreadcrumb } from "@/components/workspaces/workspace-breadcrumb";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
-import { getBreadcrumb } from "@/lib/node-utils";
+import { getBreadcrumb } from "@/lib/workspace/node-utils";
 
 export function TopNav() {
   const pathname = usePathname();

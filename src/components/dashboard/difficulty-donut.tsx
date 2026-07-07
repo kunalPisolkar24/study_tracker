@@ -1,8 +1,8 @@
 "use client";
 
 import { DonutChart } from "@/components/dashboard/donut-chart";
-import { CHART_COLORS } from "@/lib/constants";
-import type { DifficultyStats } from "@/lib/dashboard-data";
+import { CHART_COLORS } from "@/lib/shared/constants";
+import type { DifficultyStats } from "@/lib/topics/dashboard-data";
 
 interface DifficultyDonutProps {
   breakdown: Record<"EASY" | "MEDIUM" | "HARD", DifficultyStats>;

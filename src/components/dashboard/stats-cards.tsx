@@ -9,8 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CHART_COLORS } from "@/lib/constants";
-import type { WeeklySolvedEntry } from "@/lib/dashboard-data";
+import { CHART_COLORS } from "@/lib/shared/constants";
+import type { WeeklySolvedEntry } from "@/lib/topics/dashboard-data";
 
 interface StatsCardsProps {
   solvedToday: number;

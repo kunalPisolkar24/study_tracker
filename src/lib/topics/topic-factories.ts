@@ -11,7 +11,7 @@ import {
   type UpdateSubTopicInput,
   type CreateProblemInput,
   type UpdateProblemInput,
-} from "@/lib/schemas";
+} from "@/lib/topics/schemas";
 import type {
   TopicStoreItem,
   SubTopicStoreItem,

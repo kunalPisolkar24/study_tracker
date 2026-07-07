@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { createSubTopicSchema, updateSubTopicSchema } from "@/lib/schemas";
+import { createSubTopicSchema, updateSubTopicSchema } from "@/lib/topics/schemas";
 import { useFormDialog } from "@/components/topics/use-form-dialog";
 
 const createSubTopicFormSchema = z.object({

@@ -41,6 +41,4 @@ export function createDataLoader(items: Record<string, HeadlessItemData>) {
   };
 }
 
-export function isVirtualRoot(itemId: string): boolean {
-  return itemId === VIRTUAL_ROOT;
-}
+

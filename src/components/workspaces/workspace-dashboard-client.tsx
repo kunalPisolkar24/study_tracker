@@ -18,8 +18,8 @@ import { DonutChart } from "@/components/dashboard/donut-chart";
 import { Heatmap } from "@/components/dashboard/heatmap";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
-import { computeWorkspaceDashboardData } from "@/lib/workspace-dashboard-data";
-import { CHART_COLORS } from "@/lib/constants";
+import { computeWorkspaceDashboardData } from "@/lib/workspace/workspace-dashboard-data";
+import { CHART_COLORS } from "@/lib/shared/constants";
 
 interface WorkspaceDashboardClientProps {
   workspaceId: string;

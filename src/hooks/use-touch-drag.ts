@@ -8,8 +8,8 @@ import {
   computeOrderedReorder,
   computeIntoFolderReorder,
   compileReorderResult,
-} from "@/lib/tree/tree-reorder";
-import { VIRTUAL_ROOT } from "@/lib/tree/tree-adapter";
+} from "@/lib/workspace/tree/tree-reorder";
+import { VIRTUAL_ROOT } from "@/lib/workspace/tree/tree-adapter";
 
 function buildOrderedDragTarget(
   item: ItemInstance<any>,

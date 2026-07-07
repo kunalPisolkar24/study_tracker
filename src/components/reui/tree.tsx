@@ -13,7 +13,7 @@ import {
 import { ItemInstance } from "@headless-tree/core"
 import { Slot } from "radix-ui"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/shared/utils"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { MinusSignIcon, PlusSignIcon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
 

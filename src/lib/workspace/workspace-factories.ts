@@ -1,5 +1,5 @@
 import type { WorkspaceStoreItem, WorkspaceGroupStoreItem } from "@/types/workspace";
-import type { CreateWorkspaceInput, CreateWorkspaceGroupInput } from "@/lib/workspace-schemas";
+import type { CreateWorkspaceInput, CreateWorkspaceGroupInput } from "@/lib/workspace/workspace-schemas";
 
 export function createWorkspaceStoreItem(
   input: CreateWorkspaceInput,

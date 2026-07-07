@@ -8,9 +8,9 @@ import { ReviewRadial } from "@/components/dashboard/review-radial";
 import { Heatmap } from "@/components/dashboard/heatmap";
 import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { useTopicStore } from "@/stores/topic-store";
-import { computeDashboardData } from "@/lib/dashboard-data";
-import { getDashboardData } from "@/lib/services/dashboard-service";
-import type { DashboardData } from "@/lib/dashboard-data";
+import { computeDashboardData } from "@/lib/topics/dashboard-data";
+import { getDashboardData } from "@/lib/topics/services/dashboard-service";
+import type { DashboardData } from "@/lib/topics/dashboard-data";
 import { DashboardShellSkeleton } from "@/components/dashboard/dashboard-skeleton";
 
 export function DashboardShell() {

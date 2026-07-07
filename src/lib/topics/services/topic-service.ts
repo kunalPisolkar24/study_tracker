@@ -1,14 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { logger } from "@/lib/logger";
-import { mapPrismaTopic } from "@/lib/mappers";
-import * as topicRepo from "@/lib/repositories/topic-repository";
+import { auth } from "@/lib/auth/auth";
+import { logger } from "@/lib/shared/logger";
+import { mapPrismaTopic } from "@/lib/topics/mappers";
+import * as topicRepo from "@/lib/topics/repositories/topic-repository";
 import type { TopicStoreItem } from "@/types/topics";
-import { createTopicSchema, updateTopicSchema } from "@/lib/schemas";
-import type { CreateTopicInput, UpdateTopicInput } from "@/lib/schemas";
-
-export type TopicRepository = typeof topicRepo;
+import { createTopicSchema, updateTopicSchema } from "@/lib/topics/schemas";
+import type { CreateTopicInput, UpdateTopicInput } from "@/lib/topics/schemas";
 
 async function getUserId(): Promise<string | null> {
   const session = await auth();

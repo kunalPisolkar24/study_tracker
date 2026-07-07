@@ -19,7 +19,7 @@ import {
   buildTree,
   computeProgress,
   applyFilterAndSort,
-} from "@/lib/node-utils";
+} from "@/lib/workspace/node-utils";
 import type { NodeStoreItem, NodeFilterState, TreeNode } from "@/types/node";
 
 interface WorkspaceDetailClientProps {

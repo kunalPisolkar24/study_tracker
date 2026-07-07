@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
-import { logger } from "@/lib/logger";
+import { prisma } from "@/lib/shared/prisma";
+import { logger } from "@/lib/shared/logger";
 
 export async function upsertGoogleUser(
   email: string,

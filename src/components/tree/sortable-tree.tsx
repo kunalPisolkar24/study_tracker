@@ -7,10 +7,10 @@ import {
   TreeItemLabel,
   TreeDragLine,
 } from "@/components/reui/tree";
-import { useWorkspaceTree, VIRTUAL_ROOT } from "@/lib/tree-data";
+import { useWorkspaceTree, VIRTUAL_ROOT } from "@/lib/workspace/tree/tree-data";
 import { useTouchDrag } from "@/hooks/use-touch-drag";
-import { MAX_INLINE_DEPTH } from "@/lib/node-utils";
-import { cn } from "@/lib/utils";
+import { MAX_INLINE_DEPTH } from "@/lib/workspace/node-utils";
+import { cn } from "@/lib/shared/utils";
 import { TreeDragHandle } from "@/components/tree/tree-drag-handle";
 import { TreeStatusBadge } from "@/components/tree/tree-status-badge";
 import { TreeConfidenceBadge } from "@/components/tree/tree-confidence-badge";
@@ -18,7 +18,7 @@ import { TreeProgressBar } from "@/components/tree/tree-progress-bar";
 import { TreeActionButtons } from "@/components/tree/tree-action-buttons";
 import type { NodeStoreItem } from "@/types/node";
 import type { ItemInstance, TreeInstance } from "@headless-tree/core";
-import type { HeadlessItemData } from "@/lib/tree/tree-adapter";
+import type { HeadlessItemData } from "@/lib/workspace/tree/tree-adapter";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight02Icon } from "@hugeicons/core-free-icons";
 

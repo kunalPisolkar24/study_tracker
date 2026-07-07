@@ -1,11 +1,11 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
-import { prisma } from "@/lib/prisma"
-import { verifyPassword } from "@/lib/password"
-import { upsertGoogleUser } from "@/lib/user-service"
-import { logger } from "@/lib/logger"
-import { AUTH_PAGES } from "@/lib/routes"
+import { prisma } from "@/lib/shared/prisma"
+import { verifyPassword } from "@/lib/auth/password"
+import { upsertGoogleUser } from "@/lib/auth/user-service"
+import { logger } from "@/lib/shared/logger"
+import { AUTH_PAGES } from "@/lib/auth/routes"
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [

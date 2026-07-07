@@ -4,7 +4,7 @@ import type {
   TopicCardViewModel,
   SubtopicViewModel,
 } from "@/types/topics";
-import { getAllProblems } from "@/lib/topic-utils";
+import { getAllProblems } from "@/lib/topics/topic-utils";
 
 export function computeTopicCardViewModel(
   topic: TopicStoreItem

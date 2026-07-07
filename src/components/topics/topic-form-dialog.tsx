@@ -15,9 +15,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { createTopicSchema, updateTopicSchema } from "@/lib/schemas";
+import { createTopicSchema, updateTopicSchema } from "@/lib/topics/schemas";
 import { useFormDialog } from "@/components/topics/use-form-dialog";
-import type { CreateTopicInput } from "@/lib/schemas";
+import type { CreateTopicInput } from "@/lib/topics/schemas";
 
 interface TopicFormDialogProps {
   mode: "create" | "edit";

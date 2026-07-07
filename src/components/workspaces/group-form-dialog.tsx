@@ -14,8 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createWorkspaceGroupSchema, updateWorkspaceGroupSchema } from "@/lib/workspace-schemas";
-import type { CreateWorkspaceGroupInput } from "@/lib/workspace-schemas";
+import { createWorkspaceGroupSchema, updateWorkspaceGroupSchema } from "@/lib/workspace/workspace-schemas";
+import type { CreateWorkspaceGroupInput } from "@/lib/workspace/workspace-schemas";
 
 interface GroupFormDialogProps {
   mode: "create" | "edit";

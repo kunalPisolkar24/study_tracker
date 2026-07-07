@@ -6,7 +6,7 @@ import {
   Edit04Icon,
   Delete02Icon,
 } from "@hugeicons/core-free-icons";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/shared/utils";
 import type { ReactNode } from "react";
 
 interface ActionButtonConfig {

@@ -5,8 +5,8 @@ import type {
 import type {
   UpdateSubTopicInput,
   UpdateProblemInput,
-} from "@/lib/schemas";
-import { getAllProblems } from "@/lib/topic-utils";
+} from "@/lib/topics/schemas";
+import { getAllProblems } from "@/lib/topics/topic-utils";
 
 export function updateProblemInDraft(
   draft: TopicStoreItem,
