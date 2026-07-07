@@ -23,6 +23,8 @@ interface HeatmapProps {
   data: HeatmapEntry[];
   streak: number;
   maxStreak: number;
+  title?: string;
+  description?: string;
 }
 
 const LEVELS = [
@@ -44,7 +46,7 @@ function getLevel(count: number) {
 
 const DAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"];
 
-export function Heatmap({ data, streak, maxStreak }: HeatmapProps) {
+export function Heatmap({ data, streak, maxStreak, title, description }: HeatmapProps) {
   const years = useMemo(() => {
     const set = new Set<number>();
     data.forEach((d) => set.add(new Date(d.date).getFullYear()));
@@ -104,8 +106,8 @@ export function Heatmap({ data, streak, maxStreak }: HeatmapProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle>Solved in {selectedYear}</CardTitle>
-          <CardDescription>Problems solved per day</CardDescription>
+          <CardTitle>{title ?? `Solved in ${selectedYear}`}</CardTitle>
+          <CardDescription>{description ?? "Problems solved per day"}</CardDescription>
         </div>
         <Select value={selectedYear} onValueChange={setSelectedYear}>
           <SelectTrigger className="w-28">
