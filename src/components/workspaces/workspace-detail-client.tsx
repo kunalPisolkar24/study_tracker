@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, ArrowLeftIcon, Edit02Icon, Loading02Icon, PieChart09Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, ArrowLeftIcon, Edit02Icon, SaveIcon, PieChart09Icon } from "@hugeicons/core-free-icons";
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -205,8 +205,8 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
             variant={isEditing ? "default" : "outline"}
             onClick={() => setIsEditing(!isEditing)}
           >
-            <HugeiconsIcon icon={isEditing ? Loading02Icon : Edit02Icon} className="size-3" />
-            {isEditing ? "Done" : "Edit"}
+            <HugeiconsIcon icon={isEditing ? SaveIcon : Edit02Icon} className="size-3" />
+            {isEditing ? "Save" : "Edit"}
           </Button>
         </div>
       </div>

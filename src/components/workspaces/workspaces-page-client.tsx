@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, Edit02Icon, Loading02Icon } from "@hugeicons/core-free-icons";
+import { Add01Icon, Edit02Icon, SaveIcon } from "@hugeicons/core-free-icons";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -117,8 +117,8 @@ export function WorkspacesPageClient() {
             variant={isEditing ? "default" : "outline"}
             onClick={() => setIsEditing(!isEditing)}
           >
-            <HugeiconsIcon icon={isEditing ? Loading02Icon : Edit02Icon} className="size-3" />
-            {isEditing ? "Done" : "Edit"}
+            <HugeiconsIcon icon={isEditing ? SaveIcon : Edit02Icon} className="size-3" />
+            {isEditing ? "Save" : "Edit"}
           </Button>
           <Button onClick={() => setIsCreateOpen(true)}>
             <HugeiconsIcon icon={Add01Icon} />

@@ -1,7 +1,7 @@
 "use client";
 
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Add01Icon, ArrowLeft01Icon, Loading02Icon, PencilIcon } from "@hugeicons/core-free-icons";
+import { Add01Icon, ArrowLeft01Icon, PencilIcon, SaveIcon } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -126,7 +126,7 @@ export function TopicsDetailClient({ topicId }: TopicsDetailClientProps) {
                 disabled={isSaving || !hasChanges}
                 onClick={handleSave}
               >
-                {isSaving && <HugeiconsIcon icon={Loading02Icon} className="size-3 animate-spin" />}
+                <HugeiconsIcon icon={SaveIcon} className="size-3" />
                 {isSaving ? "Saving..." : "Save"}
               </Button>
               <Button
