@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowLeftIcon, BarChartIcon } from "@hugeicons/core-free-icons";
+import { ArrowLeftIcon, SquareActivity } from "@hugeicons/core-free-icons";
 import {
   AreaChart,
   Area,
@@ -118,7 +118,7 @@ export function WorkspaceDashboardClient({ workspaceId }: WorkspaceDashboardClie
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={BarChartIcon} className="size-5 text-chart-2" />
+            <HugeiconsIcon icon={SquareActivity} className="size-5 text-chart-2" />
             Topics Marked Done
           </CardTitle>
         </CardHeader>
