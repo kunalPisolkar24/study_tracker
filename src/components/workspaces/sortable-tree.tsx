@@ -250,11 +250,11 @@ function TreeItemContent({
       )}
 
       {isEditing && node && (
-        <span className="flex shrink-0 gap-1.5 ms-3 rounded-lg bg-muted/30 px-1.5 py-0.5">
+        <span className="flex shrink-0 gap-1.5 ms-3 rounded-lg bg-muted/30 px-1.5 py-0.5 border border-border/50">
           <span
             className={cn(
               "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
-              "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400",
+              "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-500/30",
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -276,7 +276,7 @@ function TreeItemContent({
           <span
             className={cn(
               "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
-              "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400",
+              "bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30",
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -298,7 +298,7 @@ function TreeItemContent({
           <span
             className={cn(
               "flex items-center justify-center size-8 md:size-6 rounded cursor-pointer",
-              "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400",
+              "bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400 border border-red-500/20 dark:border-red-500/30",
             )}
             onClick={(e) => {
               e.stopPropagation();

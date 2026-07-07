@@ -38,7 +38,7 @@ export function WorkspaceCard({
           {isEditing && (
           <div className="flex shrink-0 gap-1">
             <span
-              className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400"
+              className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-blue-500/10 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400 border border-blue-500/20 dark:border-blue-500/30"
               onClick={() => onEdit(workspace.id)}
               role="button"
               tabIndex={0}
@@ -53,7 +53,7 @@ export function WorkspaceCard({
               <HugeiconsIcon icon={Edit04Icon} className="size-4" />
             </span>
             <span
-              className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400"
+              className="flex items-center justify-center size-8 md:size-7 rounded cursor-pointer bg-red-500/10 text-red-600 dark:bg-red-500/15 dark:text-red-400 border border-red-500/20 dark:border-red-500/30"
               onClick={() => onDelete(workspace.id)}
               role="button"
               tabIndex={0}
