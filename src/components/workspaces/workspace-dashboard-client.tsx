@@ -18,6 +18,7 @@ import { DonutChart } from "@/components/dashboard/donut-chart";
 import { Heatmap } from "@/components/dashboard/heatmap";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
+import { WorkspaceDashboardSkeleton } from "@/components/skeletons/workspace-dashboard-skeleton";
 import { computeWorkspaceDashboardData } from "@/lib/workspace/workspace-dashboard-data";
 import { CHART_COLORS } from "@/lib/shared/constants";
 
@@ -52,6 +53,8 @@ function CustomTooltip({
 }
 
 export function WorkspaceDashboardClient({ workspaceId }: WorkspaceDashboardClientProps) {
+  const wsHydrated = useWorkspaceStore((s) => s.hydrated);
+  const nodeHydrated = useNodeStore((s) => s.hydrated);
   const workspace = useWorkspaceStore((s) => s.workspaces.find((w) => w.id === workspaceId));
   const allNodes = useNodeStore((s) => s.nodes);
   const allLogs = useNodeStore((s) => s.activityLogs);
@@ -69,6 +72,8 @@ export function WorkspaceDashboardClient({ workspaceId }: WorkspaceDashboardClie
     () => computeWorkspaceDashboardData(nodes, logs),
     [nodes, logs],
   );
+
+  if (!wsHydrated || !nodeHydrated) return <WorkspaceDashboardSkeleton />;
 
   if (!workspace) {
     return (

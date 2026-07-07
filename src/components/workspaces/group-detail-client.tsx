@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
+import { GroupDetailSkeleton } from "@/components/skeletons/group-detail-skeleton";
 import { WorkspaceCard } from "@/components/workspaces/workspace-card";
 import { WorkspaceFormDialog } from "@/components/workspaces/workspace-form-dialog";
 import { AddWorkspaceDialog } from "@/components/workspaces/add-workspace-dialog";
@@ -19,6 +20,7 @@ interface GroupDetailClientProps {
 
 export function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const router = useRouter();
+  const hydrated = useWorkspaceStore((s) => s.hydrated);
   const { workspaceGroups, workspaces, addWorkspace, updateWorkspace, removeWorkspace, reassignWorkspace } = useWorkspaceStore();
 
   const group = workspaceGroups.find((g) => g.id === groupId);
@@ -31,6 +33,8 @@ export function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     name: string;
     groupId?: string | null;
   } | null>(null);
+
+  if (!hydrated) return <GroupDetailSkeleton />;
 
   if (!group) {
     return (

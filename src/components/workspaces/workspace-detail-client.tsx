@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
+import { WorkspaceDetailSkeleton } from "@/components/skeletons/workspace-detail-skeleton";
 import { SortableTree } from "@/components/tree/sortable-tree";
 import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
 import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
@@ -29,8 +30,11 @@ interface WorkspaceDetailClientProps {
 
 export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceDetailClientProps) {
   const router = useRouter();
+  const wsHydrated = useWorkspaceStore((s) => s.hydrated);
+  const nodeHydrated = useNodeStore((s) => s.hydrated);
   const workspace = useWorkspaceStore((s) => s.workspaces.find((w) => w.id === workspaceId));
   const allNodes = useNodeStore((s) => s.nodes);
+
   const addNode = useNodeStore((s) => s.addNode);
   const updateNode = useNodeStore((s) => s.updateNode);
   const removeNode = useNodeStore((s) => s.removeNode);
@@ -149,6 +153,8 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     },
     [],
   );
+
+  if (!wsHydrated || !nodeHydrated) return <WorkspaceDetailSkeleton />;
 
   if (!workspace) {
     return (

@@ -16,6 +16,7 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import { useWorkspaceStore } from "@/stores/workspace-store";
+import { WorkspacesPageSkeleton } from "@/components/skeletons/workspaces-page-skeleton";
 import { WorkspaceCard } from "@/components/workspaces/workspace-card";
 import { WorkspaceFormDialog } from "@/components/workspaces/workspace-form-dialog";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
@@ -26,6 +27,7 @@ const DEBOUNCE_MS = 300;
 
 export function WorkspacesPageClient() {
   const router = useRouter();
+  const hydrated = useWorkspaceStore((s) => s.hydrated);
   const { workspaces, workspaceGroups, addWorkspace, updateWorkspace, removeWorkspace } = useWorkspaceStore();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -101,6 +103,8 @@ export function WorkspacesPageClient() {
 
   const hasWorkspaces = workspaces.length > 0;
   const hasFilteredResults = paginatedWorkspaces.length > 0;
+
+  if (!hydrated) return <WorkspacesPageSkeleton />;
 
   return (
     <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
