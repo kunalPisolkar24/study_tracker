@@ -120,45 +120,36 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   reorderSiblings: async (parentId, workspaceId, orderedIds) => {
     await reorderSiblingsAction(parentId, workspaceId, orderedIds);
     set((state) => {
-      const reorderIndex = new Map<string, number>();
-      orderedIds.forEach((id, i) => reorderIndex.set(id, i));
+      const reorderIndex = new Map(orderedIds.map((id, i) => [id, i]));
 
-      const reordered = new Set(orderedIds);
-
+      // Apply reordered positions
       const intermediate = state.nodes.map((node) => {
         if (node.workspaceId !== workspaceId) return node;
-        const newOrder = reorderIndex.get(node.id);
-        if (newOrder !== undefined) {
-          return { ...node, parentId, orderIndex: newOrder };
-        }
+        const idx = reorderIndex.get(node.id);
+        if (idx !== undefined) return { ...node, parentId, orderIndex: idx };
         return node;
       });
 
+      // Collect ALL nodes per parent (both reordered and non-reordered)
       const parentBuckets = new Map<string | null, Array<{ id: string; orderIndex: number }>>();
       for (const node of intermediate) {
         if (node.workspaceId !== workspaceId) continue;
-        if (reordered.has(node.id)) continue;
         const key = node.parentId;
         if (!parentBuckets.has(key)) parentBuckets.set(key, []);
         parentBuckets.get(key)!.push({ id: node.id, orderIndex: node.orderIndex });
       }
 
+      // Sort each bucket by orderIndex and assign dense indices
+      const finalOrderIndex = new Map<string, number>();
       for (const [, siblings] of parentBuckets) {
         siblings.sort((a, b) => a.orderIndex - b.orderIndex);
-      }
-
-      const compactIndex = new Map<string, number>();
-      for (const [, siblings] of parentBuckets) {
-        for (let i = 0; i < siblings.length; i++) {
-          compactIndex.set(siblings[i].id, i);
-        }
+        siblings.forEach((s, i) => finalOrderIndex.set(s.id, i));
       }
 
       return {
         nodes: intermediate.map((node) => {
           if (node.workspaceId !== workspaceId) return node;
-          if (reordered.has(node.id)) return node;
-          const compact = compactIndex.get(node.id);
+          const compact = finalOrderIndex.get(node.id);
           if (compact !== undefined && compact !== node.orderIndex) {
             return { ...node, orderIndex: compact };
           }
