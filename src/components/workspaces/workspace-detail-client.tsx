@@ -13,7 +13,7 @@ import { useNodeStore } from "@/stores/node-store";
 import { SortableTree } from "@/components/tree/sortable-tree";
 import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
 import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
-import { DeleteConfirmationDialog } from "@/components/topics/delete-confirmation-dialog";
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { FilterSortBar } from "@/components/workspaces/filter-sort-bar";
 import {
   buildTree,
