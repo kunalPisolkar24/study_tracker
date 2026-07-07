@@ -80,41 +80,20 @@ export function SortableTree({
   }
 
   const treeItems = tree.getItems().filter((item) => item.getId() !== VIRTUAL_ROOT);
-  const itemMetaMap = new Map<string, { isLastChild: boolean; ancestorIsLastChild: boolean[] }>();
-  for (let i = 0; i < treeItems.length; i++) {
-    const item = treeItems[i];
-    const itemLevel = item.getItemMeta().level;
-    const nextItem = treeItems[i + 1];
-    const isLastChild = !nextItem || nextItem.getItemMeta().level < itemLevel;
-    itemMetaMap.set(item.getId(), { isLastChild, ancestorIsLastChild: [] });
-  }
-  const stack: { level: number; isLastChild: boolean }[] = [];
-  for (const item of treeItems) {
-    const itemLevel = item.getItemMeta().level;
-    while (stack.length > 0 && stack[stack.length - 1].level >= itemLevel) {
-      stack.pop();
-    }
-    const meta = itemMetaMap.get(item.getId())!;
-    meta.ancestorIsLastChild = stack.map((s) => s.isLastChild);
-    stack.push({ level: itemLevel, isLastChild: meta.isLastChild });
-  }
 
   return (
     <div ref={treeContainerRefCallback}>
       <Tree
         tree={tree}
         indent={INDENT}
-        className="relative"
+        className="relative before:absolute before:inset-0 before:-ms-2 before:bg-[repeating-linear-gradient(to_right,transparent_0,transparent_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)-1px),var(--border)_calc(var(--tree-indent)))]"
       >
         <TreeDragLine />
         {treeItems.map((item: ItemInstance<HeadlessItem>) => {
-          const meta = itemMetaMap.get(item.getId())!;
           return (
             <TreeItem
               key={item.getId()}
               item={item}
-              isLastChild={meta.isLastChild}
-              ancestorIsLastChild={meta.ancestorIsLastChild}
             >
               <TreeItemContent
                 item={item}
@@ -193,6 +172,7 @@ function TreeItemContent({
         "ps-0! flex w-full",
         "hover:bg-muted",
         isLeafNode && node && "cursor-pointer",
+        "before:bg-background relative before:absolute before:inset-x-0 before:-inset-y-0.5 before:-z-10",
       )}
       onClick={() => {
         if (isLeafNode && node) onSelect(node);
