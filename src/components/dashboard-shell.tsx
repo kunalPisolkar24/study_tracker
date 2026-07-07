@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { TopNav } from "@/components/top-nav";
-import { StoreHydrator } from "@/components/store-hydrator";
 import { mainNavItems } from "@/lib/shared/navigation";
 
 interface DashboardShellProps {
@@ -20,7 +19,6 @@ interface DashboardShellProps {
 export function DashboardShell({ children, user }: DashboardShellProps) {
   return (
     <SidebarProvider>
-      <StoreHydrator />
       <AppSidebar user={user} navItems={mainNavItems} />
       <main className="flex min-h-dvh min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
         <TopNav />
