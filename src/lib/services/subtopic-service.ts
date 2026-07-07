@@ -2,29 +2,56 @@
 
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/logger";
+import { prisma } from "@/lib/prisma";
 import { mapPrismaSubTopic } from "@/lib/mappers";
 import * as subTopicRepo from "@/lib/repositories/subtopic-repository";
 import * as topicRepo from "@/lib/repositories/topic-repository";
+import { createSubTopicSchema, updateSubTopicSchema } from "@/lib/schemas";
 import type { SubTopicStoreItem } from "@/types/topics";
 import type { CreateSubTopicInput, UpdateSubTopicInput } from "@/lib/schemas";
 
 export type SubTopicRepository = typeof subTopicRepo;
+
+async function getUserId(): Promise<string | null> {
+  const session = await auth();
+  return session?.user?.id ?? null;
+}
+
+async function userOwnsTopic(userId: string, topicId: string): Promise<boolean> {
+  const topic = await topicRepo.findTopicsByUserId(userId);
+  return topic.some((t) => t.id === topicId);
+}
+
+async function userOwnsSubTopic(userId: string, subTopicId: string): Promise<string | null> {
+  const subTopic = await prisma.subTopic.findUnique({
+    where: { id: subTopicId },
+    select: { topicId: true },
+  });
+  if (!subTopic) return null;
+  const ownsTopic = await userOwnsTopic(userId, subTopic.topicId);
+  return ownsTopic ? subTopic.topicId : null;
+}
 
 export async function createSubTopic(
   topicId: string,
   input: Omit<CreateSubTopicInput, "topicId">
 ): Promise<SubTopicStoreItem | null> {
   try {
-    const userId = (await auth())?.user?.id;
+    const userId = await getUserId();
     if (!userId) return null;
 
-    const topic = await topicRepo.findTopicsByUserId(userId);
-    const ownsTopic = topic.some((t) => t.id === topicId);
+    const ownsTopic = await userOwnsTopic(userId, topicId);
     if (!ownsTopic) return null;
 
+    const parsed = createSubTopicSchema.safeParse({ ...input, topicId });
+    if (!parsed.success) {
+      logger.warn("createSubTopic validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const subTopic = await subTopicRepo.createSubTopic(topicId, {
-      name: input.name,
-      description: input.description,
+      name: parsed.data.name,
+      description: parsed.data.description,
     });
     return mapPrismaSubTopic(subTopic);
   } catch (error) {
@@ -42,10 +69,22 @@ export async function updateSubTopic(
   input: UpdateSubTopicInput
 ): Promise<SubTopicStoreItem | null> {
   try {
+    const userId = await getUserId();
+    if (!userId) return null;
+
+    const topicId = await userOwnsSubTopic(userId, subTopicId);
+    if (!topicId) return null;
+
+    const parsed = updateSubTopicSchema.safeParse(input);
+    if (!parsed.success) {
+      logger.warn("updateSubTopic validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const subTopic = await subTopicRepo.updateSubTopic(subTopicId, {
-      ...(input.name !== undefined && { name: input.name }),
-      ...(input.description !== undefined && {
-        description: input.description ?? null,
+      ...(parsed.data.name !== undefined && { name: parsed.data.name }),
+      ...(parsed.data.description !== undefined && {
+        description: parsed.data.description ?? null,
       }),
     });
     return mapPrismaSubTopic(subTopic);
@@ -61,6 +100,12 @@ export async function updateSubTopic(
 
 export async function deleteSubTopic(subTopicId: string): Promise<boolean> {
   try {
+    const userId = await getUserId();
+    if (!userId) return false;
+
+    const topicId = await userOwnsSubTopic(userId, subTopicId);
+    if (!topicId) return false;
+
     await subTopicRepo.deleteSubTopic(subTopicId);
     return true;
   } catch (error) {

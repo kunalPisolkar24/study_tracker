@@ -7,6 +7,12 @@ import type { ProblemStoreItem } from "@/types/topics";
 
 export type ActivityServiceForProblems = Pick<typeof import("@/lib/services/activity-service"), "logActivity">;
 import type { CreateProblemInput, UpdateProblemInput } from "@/lib/schemas";
+import {
+  createProblemSchema,
+  updateProblemSchema,
+  updateProblemStatusSchema,
+  updateProblemReviewCountSchema,
+} from "@/lib/schemas";
 import * as problemRepo from "@/lib/repositories/problem-repository";
 
 export type ProblemRepository = typeof problemRepo;
@@ -31,12 +37,18 @@ export async function createProblem(
   input: Omit<CreateProblemInput, "topicId">
 ): Promise<ProblemStoreItem | null> {
   try {
+    const parsed = createProblemSchema.safeParse({ ...input, topicId });
+    if (!parsed.success) {
+      logger.warn("createProblem validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const problem = await problemRepo.createProblem(topicId, {
-      subTopicId: input.subTopicId ?? null,
-      title: input.title,
-      url: input.url ?? null,
-      difficulty: input.difficulty,
-      notes: input.notes ?? null,
+      subTopicId: parsed.data.subTopicId ?? null,
+      title: parsed.data.title,
+      url: parsed.data.url ?? null,
+      difficulty: parsed.data.difficulty,
+      notes: parsed.data.notes ?? null,
     });
     return mapProblem(problem);
   } catch (error) {
@@ -54,6 +66,12 @@ export async function updateProblem(
   input: UpdateProblemInput
 ): Promise<ProblemStoreItem | null> {
   try {
+    const parsed = updateProblemSchema.safeParse(input);
+    if (!parsed.success) {
+      logger.warn("updateProblem validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const data: {
       title?: string;
       url?: string | null;
@@ -61,11 +79,11 @@ export async function updateProblem(
       subTopicId?: string | null;
       notes?: string | null;
     } = {};
-    if (input.title !== undefined) data.title = input.title;
-    if (input.url !== undefined) data.url = input.url || null;
-    if (input.difficulty !== undefined) data.difficulty = input.difficulty;
-    if (input.subTopicId !== undefined) data.subTopicId = input.subTopicId;
-    if (input.notes !== undefined) data.notes = input.notes || null;
+    if (parsed.data.title !== undefined) data.title = parsed.data.title;
+    if (parsed.data.url !== undefined) data.url = parsed.data.url || null;
+    if (parsed.data.difficulty !== undefined) data.difficulty = parsed.data.difficulty;
+    if (parsed.data.subTopicId !== undefined) data.subTopicId = parsed.data.subTopicId;
+    if (parsed.data.notes !== undefined) data.notes = parsed.data.notes || null;
 
     const problem = await problemRepo.updateProblem(problemId, data);
     return mapProblem(problem);
@@ -97,11 +115,17 @@ export async function updateProblemStatus(
   status: ProblemStoreItem["status"]
 ): Promise<ProblemStoreItem | null> {
   try {
+    const parsed = updateProblemStatusSchema.safeParse({ status });
+    if (!parsed.success) {
+      logger.warn("updateProblemStatus validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const session = await auth();
     if (!session?.user?.id) return null;
 
-    const now = status === "SOLVED" ? new Date() : null;
-    const problem = await problemRepo.updateProblemStatus(problemId, status, now);
+    const now = parsed.data.status === "SOLVED" ? new Date() : null;
+    const problem = await problemRepo.updateProblemStatus(problemId, parsed.data.status, now);
 
     if (status === "SOLVED") {
       await logActivity(problemId, "SOLVED");
@@ -155,10 +179,16 @@ export async function updateProblemReviewCount(
   reviewCount: number
 ): Promise<ProblemStoreItem | null> {
   try {
+    const parsed = updateProblemReviewCountSchema.safeParse({ reviewCount });
+    if (!parsed.success) {
+      logger.warn("updateProblemReviewCount validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const session = await auth();
     if (!session?.user?.id) return null;
 
-    const problem = await problemRepo.updateProblemReviewCount(problemId, reviewCount);
+    const problem = await problemRepo.updateProblemReviewCount(problemId, parsed.data.reviewCount);
 
     await logActivity(problemId, "REVIEWED");
 

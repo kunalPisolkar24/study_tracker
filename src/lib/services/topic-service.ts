@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger";
 import { mapPrismaTopic } from "@/lib/mappers";
 import * as topicRepo from "@/lib/repositories/topic-repository";
 import type { TopicStoreItem } from "@/types/topics";
+import { createTopicSchema, updateTopicSchema } from "@/lib/schemas";
 import type { CreateTopicInput, UpdateTopicInput } from "@/lib/schemas";
 
 export type TopicRepository = typeof topicRepo;
@@ -33,12 +34,18 @@ export async function createTopic(
   input: CreateTopicInput
 ): Promise<TopicStoreItem | null> {
   try {
+    const parsed = createTopicSchema.safeParse(input);
+    if (!parsed.success) {
+      logger.warn("createTopic validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const userId = await getUserId();
     if (!userId) return null;
 
     const topic = await topicRepo.createTopic(userId, {
-      name: input.name,
-      description: input.description,
+      name: parsed.data.name,
+      description: parsed.data.description,
     });
     return mapPrismaTopic(topic);
   } catch (error) {
@@ -55,13 +62,19 @@ export async function updateTopic(
   input: UpdateTopicInput
 ): Promise<TopicStoreItem | null> {
   try {
+    const parsed = updateTopicSchema.safeParse(input);
+    if (!parsed.success) {
+      logger.warn("updateTopic validation failed", { errors: parsed.error.flatten() });
+      return null;
+    }
+
     const userId = await getUserId();
     if (!userId) return null;
 
     const topic = await topicRepo.updateTopic(id, userId, {
-      ...(input.name !== undefined && { name: input.name }),
-      ...(input.description !== undefined && {
-        description: input.description ?? null,
+      ...(parsed.data.name !== undefined && { name: parsed.data.name }),
+      ...(parsed.data.description !== undefined && {
+        description: parsed.data.description ?? null,
       }),
     });
     return mapPrismaTopic(topic);
