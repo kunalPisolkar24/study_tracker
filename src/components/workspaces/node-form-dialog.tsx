@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LoaderPinwheelIcon } from "@hugeicons/core-free-icons";
 
 interface NodeFormDialogProps {
   mode: "create" | "edit";
@@ -87,6 +89,7 @@ export function NodeFormDialog({
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting || !title.trim()}>
+            {isSubmitting && <HugeiconsIcon icon={LoaderPinwheelIcon} className="animate-spin" />}
             {isEdit ? "Save" : "Create"}
           </Button>
         </DialogFooter>
