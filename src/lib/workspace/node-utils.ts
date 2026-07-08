@@ -128,7 +128,7 @@ export function getBreadcrumb(
   return items;
 }
 
-function isLeaf(allNodes: NodeStoreItem[], nodeId: string): boolean {
+export function isLeaf(allNodes: NodeStoreItem[], nodeId: string): boolean {
   return !allNodes.some((n) => n.parentId === nodeId);
 }
 
