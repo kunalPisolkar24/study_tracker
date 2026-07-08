@@ -79,6 +79,7 @@ export function NodeFormDialog({
             id="node-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
             placeholder="e.g., Routing Protocols"
             disabled={isSubmitting}
           />
