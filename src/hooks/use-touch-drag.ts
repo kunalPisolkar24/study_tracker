@@ -25,8 +25,10 @@ function buildOrderedDragTarget(
 
   const children = parent.getChildren();
   let beforeCount = 0;
-  for (let i = 0; i < childIndex; i++) {
-    if (draggedItems?.some((di: any) => di.getId() === children[i]?.getId())) {
+  for (let i = 0; i < childIndex && i < children.length; i++) {
+    const child = children[i];
+    if (!child) continue;
+    if (draggedItems?.some((di: any) => di.getId() === child.getId())) {
       beforeCount++;
     }
   }

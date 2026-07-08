@@ -168,7 +168,7 @@ export function Heatmap({ data, streak, maxStreak, title, description }: Heatmap
                         />
                       </TooltipTrigger>
                       <TooltipContent side="top" className="text-xs">
-                        {cell.count} {cell.count === 1 ? "problem" : "problems"} solved on{" "}
+                        {cell.count} {cell.count === 1 ? "topic" : "topics"} completed on{" "}
                         {new Date(cell.date).toLocaleDateString("en-US", {
                           weekday: "short",
                           month: "short",
