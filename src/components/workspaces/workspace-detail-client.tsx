@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
 import { WorkspaceDetailSkeleton } from "@/components/skeletons/workspace-detail-skeleton";
@@ -21,7 +20,7 @@ import {
   computeProgress,
   applyFilterAndSort,
 } from "@/lib/workspace/node-utils";
-import type { NodeStoreItem, NodeFilterState, TreeNode } from "@/types/node";
+import type { NodeStoreItem, TreeNode } from "@/types/node";
 
 interface WorkspaceDetailClientProps {
   workspaceId: string;
@@ -40,15 +39,13 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   const removeNode = useNodeStore((s) => s.removeNode);
   const reorderSiblings = useNodeStore((s) => s.reorderSiblings);
 
+  const filter = useNodeStore((s) => s.filter);
+  const setFilter = useNodeStore((s) => s.setFilter);
+
   const workspaceNodes = useMemo(
     () => allNodes.filter((n) => n.workspaceId === workspaceId),
     [allNodes, workspaceId],
   );
-
-  const [filter, setFilter] = useState<NodeFilterState>({
-    status: "all",
-    confidence: "all",
-  });
 
   const [isEditing, setIsEditing] = useState(false);
   const [dialog, setDialog] = useState<
@@ -172,59 +169,58 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   }
 
   return (
-    <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>
-          {rootNode && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              {workspace.name}
-            </p>
-          )}
-        </div>
+    <div className="mx-auto flex w-full flex-1 flex-col">
+      <div className="sticky top-14 z-10 bg-background px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+        <div className="flex flex-col sm:flex-row flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>
+            {rootNode && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {workspace.name}
+              </p>
+            )}
+          </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
-            <span>{progress}%</span>
-            <Progress value={progress} className="h-1.5 w-16" />
-          </span>
-          <Button
-            size="sm"
-            variant="outline"
-            asChild
-          >
-            <Link href={`/workspaces/${workspaceId}/dashboard`}>
-              <HugeiconsIcon icon={PieChart09Icon} />
-              Dashboard
-            </Link>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setDialog({ type: "create" })}
-          >
-            <HugeiconsIcon icon={Add01Icon} />
-            Add Topic
-          </Button>
-          <Button
-            size="sm"
-            variant={isEditing ? "default" : "outline"}
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            <HugeiconsIcon icon={isEditing ? SaveIcon : Edit02Icon} className="size-3" />
-            {isEditing ? "Save" : "Edit"}
-          </Button>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+              <span>{progress}%</span>
+              <Progress value={progress} className="h-1.5 w-16" />
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              asChild
+            >
+              <Link href={`/workspaces/${workspaceId}/dashboard`}>
+                <HugeiconsIcon icon={PieChart09Icon} />
+                Dashboard
+              </Link>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setDialog({ type: "create" })}
+            >
+              <HugeiconsIcon icon={Add01Icon} />
+              Add Topic
+            </Button>
+            <Button
+              size="sm"
+              variant={isEditing ? "default" : "outline"}
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              <HugeiconsIcon icon={isEditing ? SaveIcon : Edit02Icon} className="size-3" />
+              {isEditing ? "Save" : "Edit"}
+            </Button>
+            <FilterSortBar
+              filter={filter}
+              onChange={setFilter}
+            />
+          </div>
         </div>
       </div>
 
-      <Separator className="my-6" />
-
-      <FilterSortBar
-        filter={filter}
-        onChange={setFilter}
-      />
-
-      <div className="mt-6 flex-1">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 pb-8">
         <SortableTree
           workspaceNodes={displayNodes}
           isEditing={isEditing}

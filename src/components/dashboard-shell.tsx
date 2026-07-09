@@ -18,9 +18,9 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children, user }: DashboardShellProps) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="h-svh overflow-hidden">
       <AppSidebar user={user} navItems={mainNavItems} />
-      <main className="flex min-h-dvh min-w-0 w-full max-w-full flex-1 flex-col overflow-x-hidden">
+      <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
         <TopNav />
         {children}
       </main>

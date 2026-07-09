@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction, CreateNodeInput, UpdateNodeInput } from "@/types/node";
+import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction, CreateNodeInput, UpdateNodeInput, NodeFilterState } from "@/types/node";
 import { createNodeStoreItem, updateNodeStoreItem, generateId } from "@/lib/workspace/node-factories";
 import {
   addNodeAction,
@@ -16,6 +16,7 @@ interface NodeStoreState {
   nodes: NodeStoreItem[];
   activityLogs: NodeActivityEntry[];
   hydrated: boolean;
+  filter: NodeFilterState;
 }
 
 interface NodeStoreActions {
@@ -26,6 +27,7 @@ interface NodeStoreActions {
   reorderSiblings: (parentId: string | null, workspaceId: string, orderedIds: string[]) => Promise<void>;
   getWorkspaceNodes: (workspaceId: string) => NodeStoreItem[];
   getWorkspaceActivityLogs: (workspaceId: string) => NodeActivityEntry[];
+  setFilter: (filter: NodeFilterState) => void;
 }
 
 type NodeStore = NodeStoreState & NodeStoreActions;
@@ -34,6 +36,7 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   nodes: [],
   activityLogs: [],
   hydrated: false,
+  filter: { status: "all", confidence: "all" },
 
   hydrate: async (userId: string) => {
     const [nodes, activityLogs] = await Promise.all([
@@ -165,5 +168,9 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
 
   getWorkspaceActivityLogs: (workspaceId) => {
     return get().activityLogs.filter((l) => l.workspaceId === workspaceId);
+  },
+
+  setFilter: (filter) => {
+    set({ filter });
   },
 }));
