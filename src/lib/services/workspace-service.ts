@@ -1,6 +1,4 @@
 import { workspaceRepository } from "@/lib/repositories/workspace-repository";
-import { workspaceGroupRepository } from "@/lib/repositories/workspace-group-repository";
-import { createWorkspaceStoreItem, updateWorkspaceStoreItem } from "@/lib/workspace/workspace-factories";
 import type { WorkspaceStoreItem } from "@/types/workspace";
 import type { CreateWorkspaceInput } from "@/lib/workspace/workspace-schemas";
 
