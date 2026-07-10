@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/shared/prisma";
 import type { NodeStoreItem } from "@/types/node";
+import type { Prisma } from "@/generated/prisma/client";
 
 function toDomain(row: {
   id: string;
@@ -93,7 +94,7 @@ export const nodeRepository = {
     orderIndex: number;
     userId: string;
   }): Promise<NodeStoreItem> {
-    const row = await prisma.node.create({ data: data as any });
+    const row = await prisma.node.create({ data: data as Prisma.NodeUncheckedCreateInput });
     return toDomain(row);
   },
 
@@ -110,7 +111,7 @@ export const nodeRepository = {
   ): Promise<NodeStoreItem | null> {
     await prisma.node.updateMany({
       where: { id, userId },
-      data: data as any,
+      data: data as Prisma.NodeUncheckedUpdateInput,
     });
     return this.findById(id, userId);
   },
@@ -120,17 +121,26 @@ export const nodeRepository = {
     userId: string,
   ): Promise<void> {
     if (updates.length === 0) return;
-    const cases = updates.map((u) => `WHEN id = '${u.id}' THEN ${u.orderIndex}`);
-    const parentCases = updates.map((u) => {
-      const parentVal = u.parentId === null ? "NULL" : `'${u.parentId}'`;
-      return `WHEN id = '${u.id}' THEN ${parentVal}::uuid`;
-    });
-    const idPlaceholders = updates.map((_, i) => `$${i + 1}`).join(",");
-    const userIdPlaceholder = `$${updates.length + 1}`;
+
+    const valueClauses: string[] = [];
+    const params: (string | number)[] = [];
+    let paramIndex = 1;
+
+    for (const u of updates) {
+      const parentParam = `$${paramIndex + 1}`;
+      valueClauses.push(`($${paramIndex}::uuid, ${u.orderIndex}::int, ${parentParam}::uuid)`);
+      paramIndex += 2;
+      params.push(u.id, u.parentId ?? "00000000-0000-0000-0000-000000000000");
+    }
+
+    const userIdParam = `$${paramIndex}`;
+    params.push(userId);
+
     await prisma.$executeRawUnsafe(
-      `UPDATE "Node" SET "orderIndex" = CASE ${cases.join(" ")} END, "parentId" = CASE ${parentCases.join(" ")} END WHERE id IN (${idPlaceholders}) AND "userId" = ${userIdPlaceholder}`,
-      ...updates.map((u) => u.id),
-      userId,
+      `UPDATE "Node" SET "orderIndex" = v.new_index, "parentId" = NULLIF(v.new_parent, '00000000-0000-0000-0000-000000000000'::uuid)
+       FROM (VALUES ${valueClauses.join(", ")}) AS v(id, new_index, new_parent)
+       WHERE "Node".id = v.id::uuid AND "Node"."userId" = ${userIdParam}::uuid`,
+      ...params,
     );
   },
 
