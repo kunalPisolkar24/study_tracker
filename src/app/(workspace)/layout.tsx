@@ -18,7 +18,7 @@ export default async function WorkspaceLayout({
 
   return (
     <>
-      <StoreHydrator userId={session.user.id} />
+      <StoreHydrator />
       <DashboardShell
         user={{
           name: session.user.name ?? "",
