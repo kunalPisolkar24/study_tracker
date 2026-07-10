@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -55,13 +55,6 @@ export function NodeDetailDrawer({
   const [status, setStatus] = useState<NodeStatus | null>(node.status);
   const [confidence, setConfidence] = useState<NodeConfidence | null>(node.confidence);
   const [notes, setNotes] = useState(node.notes ?? "");
-
-  useEffect(() => {
-    setTitle(node.title);
-    setStatus(node.status);
-    setConfidence(node.confidence);
-    setNotes(node.notes ?? "");
-  }, [node]);
 
   function handleSave() {
     onSave(node.id, { title: title.trim() || node.title, status, confidence, notes });
