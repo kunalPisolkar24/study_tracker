@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSidebar } from "@/components/ui/sidebar";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { FireIcon, ChampionIcon, SquareActivity } from "@hugeicons/core-free-icons";
 import {
@@ -37,8 +38,6 @@ const LEVELS = [
   { threshold: 4, className: "bg-chart-2" },
 ] as const;
 
-const CELL_SIZE = "clamp(14px, 2vw, 18px)";
-
 function getLevel(count: number) {
   for (let i = LEVELS.length - 1; i >= 0; i--) {
     if (count >= LEVELS[i].threshold) return LEVELS[i];
@@ -58,6 +57,11 @@ export function Heatmap({ data, streak, maxStreak, title, description }: Heatmap
   const [selectedYear, setSelectedYear] = useState<string>(
     String(Math.max(...years))
   );
+
+  const { state: sidebarState } = useSidebar();
+  const CELL_SIZE = sidebarState === "collapsed"
+    ? "clamp(16px, 2.8vw, 22px)"
+    : "clamp(14px, 2vw, 18px)";
 
   const { grid, monthLabels } = useMemo(() => {
     const year = Number(selectedYear);
