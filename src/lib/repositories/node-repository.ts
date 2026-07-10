@@ -128,18 +128,18 @@ export const nodeRepository = {
 
     for (const u of updates) {
       const parentParam = `$${paramIndex + 1}`;
-      valueClauses.push(`($${paramIndex}::uuid, ${u.orderIndex}::int, ${parentParam}::uuid)`);
+      valueClauses.push(`($${paramIndex}, ${u.orderIndex}::int, ${parentParam})`);
       paramIndex += 2;
-      params.push(u.id, u.parentId ?? "00000000-0000-0000-0000-000000000000");
+      params.push(u.id, u.parentId ?? "__NULL__");
     }
 
     const userIdParam = `$${paramIndex}`;
     params.push(userId);
 
     await prisma.$executeRawUnsafe(
-      `UPDATE "Node" SET "orderIndex" = v.new_index, "parentId" = NULLIF(v.new_parent, '00000000-0000-0000-0000-000000000000'::uuid)
+      `UPDATE "Node" SET "orderIndex" = v.new_index, "parentId" = NULLIF(v.new_parent, '__NULL__')
        FROM (VALUES ${valueClauses.join(", ")}) AS v(id, new_index, new_parent)
-       WHERE "Node".id = v.id::uuid AND "Node"."userId" = ${userIdParam}::uuid`,
+       WHERE "Node".id = v.id AND "Node"."userId" = ${userIdParam}`,
       ...params,
     );
   },
