@@ -4,9 +4,7 @@ import { create } from "zustand";
 import type { WorkspaceStoreItem, WorkspaceGroupStoreItem } from "@/types/workspace";
 import type { CreateWorkspaceInput, CreateWorkspaceGroupInput } from "@/lib/workspace/workspace-schemas";
 import {
-  createWorkspaceStoreItem,
   updateWorkspaceStoreItem,
-  createWorkspaceGroupStoreItem,
   updateWorkspaceGroupStoreItem,
 } from "@/lib/workspace/workspace-factories";
 import {
@@ -30,7 +28,7 @@ interface WorkspaceStoreState {
 }
 
 interface WorkspaceStoreActions {
-  hydrate: (userId: string) => Promise<void>;
+  hydrate: () => Promise<void>;
   addWorkspace: (input: CreateWorkspaceInput & { groupId?: string | null }) => Promise<void>;
   updateWorkspace: (id: string, input: CreateWorkspaceInput) => Promise<void>;
   removeWorkspace: (id: string) => Promise<void>;
@@ -49,7 +47,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   workspaces: [],
   hydrated: false,
 
-  hydrate: async (userId: string) => {
+  hydrate: async () => {
     const [workspaces, groups] = await Promise.all([
       fetchWorkspacesAction(),
       fetchGroupsAction(),
@@ -63,7 +61,13 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   updateWorkspace: async (id, input) => {
-    await updateWorkspaceAction(id, input);
+    const previous = get().workspaces;
+    try {
+      await updateWorkspaceAction(id, input);
+    } catch {
+      set({ workspaces: previous });
+      throw new Error("Failed to update workspace");
+    }
     set((state) => ({
       workspaces: state.workspaces.map((w) =>
         w.id === id ? updateWorkspaceStoreItem(w, input) : w,
@@ -72,14 +76,26 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   removeWorkspace: async (id) => {
-    await deleteWorkspaceAction(id);
+    const previous = get().workspaces;
+    try {
+      await deleteWorkspaceAction(id);
+    } catch {
+      set({ workspaces: previous });
+      throw new Error("Failed to delete workspace");
+    }
     set((state) => ({
       workspaces: state.workspaces.filter((w) => w.id !== id),
     }));
   },
 
   reassignWorkspace: async (id, groupId) => {
-    await reassignWorkspaceAction(id, groupId);
+    const previous = get().workspaces;
+    try {
+      await reassignWorkspaceAction(id, groupId);
+    } catch {
+      set({ workspaces: previous });
+      throw new Error("Failed to reassign workspace");
+    }
     set((state) => ({
       workspaces: state.workspaces.map((w) =>
         w.id === id ? { ...w, groupId } : w,
@@ -93,7 +109,13 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   updateGroup: async (id, input) => {
-    await updateGroupAction(id, input);
+    const previous = get().workspaceGroups;
+    try {
+      await updateGroupAction(id, input);
+    } catch {
+      set({ workspaceGroups: previous });
+      throw new Error("Failed to update group");
+    }
     set((state) => ({
       workspaceGroups: state.workspaceGroups.map((g) =>
         g.id === id ? updateWorkspaceGroupStoreItem(g, input) : g,
@@ -102,7 +124,14 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   removeGroup: async (id) => {
-    await deleteGroupAction(id);
+    const previousGroups = get().workspaceGroups;
+    const previousWorkspaces = get().workspaces;
+    try {
+      await deleteGroupAction(id);
+    } catch {
+      set({ workspaceGroups: previousGroups, workspaces: previousWorkspaces });
+      throw new Error("Failed to delete group");
+    }
     set((state) => ({
       workspaceGroups: state.workspaceGroups.filter((g) => g.id !== id),
       workspaces: state.workspaces.map((w) =>

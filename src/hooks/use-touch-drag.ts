@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from "react";
-import type { TreeInstance, ItemInstance } from "@headless-tree/core";
+import { useRef, useEffect, useLayoutEffect } from "react";
+import type { TreeInstance, ItemInstance, DndState } from "@headless-tree/core";
 import { isOrderedDragTarget } from "@headless-tree/core";
+import type { HeadlessItemData } from "@/lib/workspace/tree/tree-adapter";
 import { useDragGhost } from "@/hooks/use-drag-ghost";
 import {
   computeOrderedReorder,
@@ -11,8 +12,10 @@ import {
 } from "@/lib/workspace/tree/tree-reorder";
 import { VIRTUAL_ROOT } from "@/lib/workspace/tree/tree-adapter";
 
+type TouchTree = TreeInstance<HeadlessItemData>;
+
 function buildOrderedDragTarget(
-  item: ItemInstance<any>,
+  item: ItemInstance<HeadlessItemData>,
   position: "above" | "below",
   tree: TouchTree,
 ): Record<string, unknown> | null {
@@ -28,7 +31,7 @@ function buildOrderedDragTarget(
   for (let i = 0; i < childIndex && i < children.length; i++) {
     const child = children[i];
     if (!child) continue;
-    if (draggedItems?.some((di: any) => di.getId() === child.getId())) {
+    if (draggedItems?.some((di) => di.getId() === child.getId())) {
       beforeCount++;
     }
   }
@@ -41,9 +44,6 @@ function buildOrderedDragTarget(
     dragLineLevel: itemMeta.level,
   };
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type TouchTree = TreeInstance<any>;
 
 interface TouchDragOptions {
   tree: TouchTree | null;
@@ -59,7 +59,7 @@ export function useTouchDrag({
   containerEl,
 }: TouchDragOptions) {
   const isDraggingRef = useRef(false);
-  const draggedItemRef = useRef<ItemInstance<any> | null>(null);
+  const draggedItemRef = useRef<ItemInstance<HeadlessItemData> | null>(null);
   const treeRef = useRef(tree);
   const onReorderRef = useRef(onReorder);
   const ghost = useDragGhost();
@@ -74,14 +74,16 @@ export function useTouchDrag({
 
   const cleanupRef = useRef<() => void>(() => {});
 
-  cleanupRef.current = () => {
-    if (isDraggingRef.current && treeRef.current) {
-      treeRef.current.applySubStateUpdate("dnd", null);
-    }
-    ghost.remove();
-    isDraggingRef.current = false;
-    draggedItemRef.current = null;
-  };
+  useLayoutEffect(() => {
+    cleanupRef.current = () => {
+      if (isDraggingRef.current && treeRef.current) {
+        treeRef.current.applySubStateUpdate("dnd", null);
+      }
+      ghost.remove();
+      isDraggingRef.current = false;
+      draggedItemRef.current = null;
+    };
+  });
 
   useEffect(() => {
     if (!containerEl || !enabled) return;
@@ -100,7 +102,7 @@ export function useTouchDrag({
       if (!t) return;
 
       const items = t.getItems();
-      const item = items.find((i: any) => i.getElement() === treeItemEl);
+      const item = items.find((i) => i.getElement() === treeItemEl);
       if (!item) return;
 
       e.preventDefault();
@@ -117,7 +119,7 @@ export function useTouchDrag({
       t.applySubStateUpdate("dnd", {
         draggedItems: [item],
         draggingOverItem: item,
-      } as never);
+      } as DndState<HeadlessItemData>);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -149,7 +151,7 @@ export function useTouchDrag({
 
       const targetItem = t
         .getItems()
-        .find((i: any) => i.getElement() === current);
+        .find((i) => i.getElement() === current);
       if (!targetItem) return;
 
       const bb = current.getBoundingClientRect();
@@ -159,7 +161,7 @@ export function useTouchDrag({
 
       const draggedItems = t.getState().dnd?.draggedItems;
       const isDraggingSelfOrDescendant = draggedItems?.some(
-        (di: any) =>
+        (di) =>
           targetItem.getId() === di.getId() ||
           targetItem.isDescendentOf(di.getId()),
       );
@@ -191,7 +193,7 @@ export function useTouchDrag({
         t.applySubStateUpdate("dnd", {
           dragTarget,
           draggingOverItem: targetItem,
-        } as never);
+        } as DndState<HeadlessItemData>);
       }
     };
 
@@ -205,11 +207,11 @@ export function useTouchDrag({
       if (dragTarget) {
         const draggedItems = dndState?.draggedItems;
         if (draggedItems && draggedItems.length > 0) {
-          const draggedIds = draggedItems.map((i: ItemInstance<any>) => i.getId());
+          const draggedIds = draggedItems.map((i) => i.getId());
 
           if (isOrderedDragTarget(dragTarget)) {
-            const parent = dragTarget.item as ItemInstance<any>;
-            const allChildren = parent.getChildren().map((c: ItemInstance<any>) => c.getId());
+            const parent = dragTarget.item as ItemInstance<HeadlessItemData>;
+            const allChildren = parent.getChildren().map((c) => c.getId());
             const result = computeOrderedReorder(
               allChildren,
               draggedIds,
@@ -224,7 +226,7 @@ export function useTouchDrag({
           } else {
             const allChildren = dragTarget.item
               .getChildren()
-              .map((c: ItemInstance<any>) => c.getId());
+              .map((c) => c.getId());
             const result = computeIntoFolderReorder(allChildren, draggedIds);
             const compiled = compileReorderResult(
               dragTarget.item.getId(),

@@ -33,7 +33,12 @@ export async function signInAction(
     });
     return { error: null };
   } catch (error) {
-    if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
+    if (
+      error instanceof Error &&
+      "digest" in error &&
+      typeof (error as { digest: string }).digest === "string" &&
+      (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
+    ) {
       throw error;
     }
     if (

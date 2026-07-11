@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction, CreateNodeInput, UpdateNodeInput } from "@/types/node";
+import type { NodeStoreItem, NodeActivityEntry, NodeActivityAction, CreateNodeInput, UpdateNodeInput, NodeFilterState } from "@/types/node";
 import { createNodeStoreItem, updateNodeStoreItem, generateId } from "@/lib/workspace/node-factories";
 import {
   addNodeAction,
@@ -16,16 +16,18 @@ interface NodeStoreState {
   nodes: NodeStoreItem[];
   activityLogs: NodeActivityEntry[];
   hydrated: boolean;
+  filter: NodeFilterState;
 }
 
 interface NodeStoreActions {
-  hydrate: (userId: string) => Promise<void>;
+  hydrate: () => Promise<void>;
   addNode: (input: CreateNodeInput) => Promise<string>;
   updateNode: (id: string, input: UpdateNodeInput) => Promise<void>;
   removeNode: (id: string) => Promise<void>;
   reorderSiblings: (parentId: string | null, workspaceId: string, orderedIds: string[]) => Promise<void>;
   getWorkspaceNodes: (workspaceId: string) => NodeStoreItem[];
   getWorkspaceActivityLogs: (workspaceId: string) => NodeActivityEntry[];
+  setFilter: (filter: NodeFilterState) => void;
 }
 
 type NodeStore = NodeStoreState & NodeStoreActions;
@@ -34,8 +36,9 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   nodes: [],
   activityLogs: [],
   hydrated: false,
+  filter: { status: "all", confidence: "all" },
 
-  hydrate: async (userId: string) => {
+  hydrate: async () => {
     const [nodes, activityLogs] = await Promise.all([
       fetchAllNodesAction(),
       fetchAllActivityLogsAction(),
@@ -68,10 +71,15 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
 
   updateNode: async (id, input) => {
     const existing = get().nodes.find((n) => n.id === id);
-    if (!existing) return;
+    if (!existing) {
+      console.warn(`updateNode: node ${id} not found`);
+      return;
+    }
 
     const now = new Date().toISOString();
     const logs: NodeActivityEntry[] = [];
+    const previousNodes = get().nodes;
+    const previousLogs = get().activityLogs;
 
     if (input.status !== undefined && input.status !== existing.status) {
       const action: NodeActivityAction =
@@ -96,7 +104,12 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
       });
     }
 
-    await updateNodeAction(id, input);
+    try {
+      await updateNodeAction(id, input);
+    } catch {
+      set({ nodes: previousNodes, activityLogs: previousLogs });
+      throw new Error("Failed to update node");
+    }
 
     set((state) => ({
       nodes: state.nodes.map((n) => (n.id === id ? updateNodeStoreItem(n, input) : n)),
@@ -105,7 +118,13 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   },
 
   removeNode: async (id) => {
-    await removeNodeAction(id);
+    const previousNodes = get().nodes;
+    try {
+      await removeNodeAction(id);
+    } catch {
+      set({ nodes: previousNodes });
+      throw new Error("Failed to remove node");
+    }
     set((state) => {
       const idsToRemove = new Set<string>();
       function collectDescendants(nodeId: string) {
@@ -118,11 +137,16 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
   },
 
   reorderSiblings: async (parentId, workspaceId, orderedIds) => {
-    await reorderSiblingsAction(parentId, workspaceId, orderedIds);
+    const previousNodes = get().nodes;
+    try {
+      await reorderSiblingsAction(parentId, workspaceId, orderedIds);
+    } catch {
+      set({ nodes: previousNodes });
+      throw new Error("Failed to reorder nodes");
+    }
     set((state) => {
       const reorderIndex = new Map(orderedIds.map((id, i) => [id, i]));
 
-      // Apply reordered positions
       const intermediate = state.nodes.map((node) => {
         if (node.workspaceId !== workspaceId) return node;
         const idx = reorderIndex.get(node.id);
@@ -130,7 +154,6 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
         return node;
       });
 
-      // Collect ALL nodes per parent (both reordered and non-reordered)
       const parentBuckets = new Map<string | null, Array<{ id: string; orderIndex: number }>>();
       for (const node of intermediate) {
         if (node.workspaceId !== workspaceId) continue;
@@ -139,7 +162,6 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
         parentBuckets.get(key)!.push({ id: node.id, orderIndex: node.orderIndex });
       }
 
-      // Sort each bucket by orderIndex and assign dense indices
       const finalOrderIndex = new Map<string, number>();
       for (const [, siblings] of parentBuckets) {
         siblings.sort((a, b) => a.orderIndex - b.orderIndex);
@@ -165,5 +187,9 @@ export const useNodeStore = create<NodeStore>((set, get) => ({
 
   getWorkspaceActivityLogs: (workspaceId) => {
     return get().activityLogs.filter((l) => l.workspaceId === workspaceId);
+  },
+
+  setFilter: (filter) => {
+    set({ filter });
   },
 }));

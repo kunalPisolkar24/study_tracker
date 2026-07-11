@@ -21,9 +21,10 @@ import { WorkspaceCard } from "@/components/workspaces/workspace-card";
 import { WorkspaceFormDialog } from "@/components/workspaces/workspace-form-dialog";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import type { CreateWorkspaceInput } from "@/lib/workspace/workspace-schemas";
+import { LAYOUT } from "@/lib/shared/constants";
 
-const PAGE_SIZE = 6;
-const DEBOUNCE_MS = 300;
+const PAGE_SIZE = LAYOUT.PAGE_SIZE;
+const DEBOUNCE_MS = LAYOUT.DEBOUNCE_MS;
 
 export function WorkspacesPageClient() {
   const router = useRouter();
@@ -83,11 +84,6 @@ export function WorkspacesPageClient() {
     setEditTarget(null);
     toast.success("Workspace updated successfully");
     return true;
-  }
-
-  function handleDelete(id: string) {
-    const w = workspaces.find((x) => x.id === id);
-    if (w) setDeleteTarget({ id: w.id, name: w.name });
   }
 
   async function confirmDelete() {

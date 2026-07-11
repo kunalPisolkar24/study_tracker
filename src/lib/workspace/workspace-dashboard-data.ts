@@ -2,6 +2,7 @@ import type { NodeStoreItem, NodeActivityEntry } from "@/types/node";
 import { toDateStr } from "@/lib/shared/date-utils";
 import { computeStreaks, computeHeatmap } from "@/lib/shared/streak-utils";
 import type { HeatmapEntry } from "@/lib/shared/streak-utils";
+import { isLeaf } from "@/lib/workspace/node-utils";
 
 export interface WorkspaceDashboardData {
   heatmap: HeatmapEntry[];
@@ -68,6 +69,7 @@ function computeDoneOverTime(logs: NodeActivityEntry[]): { date: string; count: 
 function computeStatusBreakdown(nodes: NodeStoreItem[]): { name: string; value: number; color: string; label: string }[] {
   const counts: Record<string, number> = { done: 0, in_progress: 0, not_started: 0 };
   for (const node of nodes) {
+    if (!isLeaf(nodes, node.id)) continue;
     const key = node.status ?? "not_started";
     counts[key] = (counts[key] ?? 0) + 1;
   }
@@ -84,6 +86,7 @@ function computeStatusBreakdown(nodes: NodeStoreItem[]): { name: string; value: 
 function computeConfidenceBreakdown(nodes: NodeStoreItem[]): { name: string; value: number; color: string; label: string }[] {
   const counts: Record<string, number> = { strong: 0, ok: 0, weak: 0 };
   for (const node of nodes) {
+    if (!isLeaf(nodes, node.id)) continue;
     if (!node.confidence) continue;
     counts[node.confidence] = (counts[node.confidence] ?? 0) + 1;
   }
@@ -116,6 +119,6 @@ export function computeWorkspaceDashboardData(
     doneOverTime: computeDoneOverTime(logs),
     statusBreakdown: computeStatusBreakdown(nodes),
     confidenceBreakdown: computeConfidenceBreakdown(nodes),
-    totalNodes: nodes.length,
+    totalNodes: nodes.filter((n) => isLeaf(nodes, n.id)).length,
   };
 }

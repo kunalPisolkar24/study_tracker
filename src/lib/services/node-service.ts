@@ -2,6 +2,7 @@ import { prisma } from "@/lib/shared/prisma";
 import { nodeRepository } from "@/lib/repositories/node-repository";
 import { nodeActivityRepository } from "@/lib/repositories/node-activity-repository";
 import { generateId } from "@/lib/workspace/node-factories";
+import { NotFoundError } from "@/lib/shared/errors";
 import type { NodeStoreItem, NodeActivityAction, CreateNodeInput, UpdateNodeInput } from "@/types/node";
 
 function deriveAction(
@@ -47,20 +48,13 @@ export const nodeService = {
 
   async updateNode(id: string, input: UpdateNodeInput, userId: string): Promise<void> {
     const existing = await nodeRepository.findById(id, userId);
-    if (!existing) throw new Error("Node not found");
+    if (!existing) throw new NotFoundError("Node", id);
 
     const now = new Date();
     const statusChanged = input.status !== undefined && input.status !== existing.status;
     const confidenceChanged = input.confidence !== undefined && input.confidence !== existing.confidence;
     const notesChanged = input.notes !== undefined && input.notes !== existing.notes;
     const shouldUpdateReviewedAt = statusChanged || confidenceChanged || notesChanged;
-
-    const updateData: Record<string, unknown> = {};
-    if (input.title !== undefined) updateData.title = input.title;
-    if (input.status !== undefined) updateData.status = input.status;
-    if (input.confidence !== undefined) updateData.confidence = input.confidence;
-    if (input.notes !== undefined) updateData.notes = input.notes;
-    if (shouldUpdateReviewedAt) updateData.lastReviewedAt = now;
 
     const logs: Array<{
       id: string;
@@ -80,7 +74,13 @@ export const nodeService = {
     }
 
     await prisma.$transaction(async () => {
-      await nodeRepository.update(id, updateData as any, userId);
+      await nodeRepository.update(id, {
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.status !== undefined && { status: input.status }),
+        ...(input.confidence !== undefined && { confidence: input.confidence }),
+        ...(input.notes !== undefined && { notes: input.notes }),
+        ...(shouldUpdateReviewedAt && { lastReviewedAt: now }),
+      }, userId);
       if (logs.length > 0) {
         await nodeActivityRepository.createMany(logs);
       }
