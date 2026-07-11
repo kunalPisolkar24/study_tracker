@@ -2,14 +2,14 @@
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Add01Icon, ArrowLeftIcon, Edit02Icon, SaveIcon, PieChart09Icon } from "@hugeicons/core-free-icons";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import { useNodeStore } from "@/stores/node-store";
+import { WorkspaceDetailSkeleton } from "@/components/skeletons/workspace-detail-skeleton";
 import { SortableTree } from "@/components/tree/sortable-tree";
 import { NodeFormDialog } from "@/components/workspaces/node-form-dialog";
 import { NodeDetailDrawer } from "@/components/workspaces/node-detail-drawer";
@@ -20,7 +20,7 @@ import {
   computeProgress,
   applyFilterAndSort,
 } from "@/lib/workspace/node-utils";
-import type { NodeStoreItem, NodeFilterState, TreeNode } from "@/types/node";
+import type { NodeStoreItem, TreeNode } from "@/types/node";
 
 interface WorkspaceDetailClientProps {
   workspaceId: string;
@@ -29,24 +29,27 @@ interface WorkspaceDetailClientProps {
 
 export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceDetailClientProps) {
   const router = useRouter();
+  const wsHydrated = useWorkspaceStore((s) => s.hydrated);
+  const nodeHydrated = useNodeStore((s) => s.hydrated);
   const workspace = useWorkspaceStore((s) => s.workspaces.find((w) => w.id === workspaceId));
   const allNodes = useNodeStore((s) => s.nodes);
+
   const addNode = useNodeStore((s) => s.addNode);
   const updateNode = useNodeStore((s) => s.updateNode);
   const removeNode = useNodeStore((s) => s.removeNode);
   const reorderSiblings = useNodeStore((s) => s.reorderSiblings);
+
+  const filter = useNodeStore((s) => s.filter);
+  const setFilter = useNodeStore((s) => s.setFilter);
 
   const workspaceNodes = useMemo(
     () => allNodes.filter((n) => n.workspaceId === workspaceId),
     [allNodes, workspaceId],
   );
 
-  const [filter, setFilter] = useState<NodeFilterState>({
-    status: "all",
-    confidence: "all",
-  });
-
   const [isEditing, setIsEditing] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
+  const headerRef = useRef<HTMLDivElement>(null);
   const [dialog, setDialog] = useState<
     { type: "idle" }
     | { type: "create"; parentId?: string }
@@ -94,7 +97,7 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
 
   const handleCreate = useCallback(
     async (title: string) => {
-      addNode({
+      await addNode({
         workspaceId,
         parentId: dialog.type === "create" ? dialog.parentId ?? null : null,
         title,
@@ -107,22 +110,22 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   const handleEdit = useCallback(
     async (title: string) => {
       if (dialog.type !== "edit") return false;
-      updateNode(dialog.target.id, { title });
+      await updateNode(dialog.target.id, { title });
       return true;
     },
     [updateNode, dialog],
   );
 
   const handleDetailSave = useCallback(
-    (id: string, updates: Parameters<typeof updateNode>[1]) => {
-      updateNode(id, updates);
+    async (id: string, updates: Parameters<typeof updateNode>[1]) => {
+      await updateNode(id, updates);
     },
     [updateNode],
   );
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => {
     if (dialog.type !== "delete") return;
-    removeNode(dialog.target.id);
+    await removeNode(dialog.target.id);
     if (focusedNodeId === dialog.target.id) {
       router.push(`/workspaces/${workspaceId}`);
     }
@@ -137,8 +140,8 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   );
 
   const handleReorder = useCallback(
-    (parentId: string | null, orderedChildIds: string[]) => {
-      reorderSiblings(parentId, workspaceId, orderedChildIds);
+    async (parentId: string | null, orderedChildIds: string[]) => {
+      await reorderSiblings(parentId, workspaceId, orderedChildIds);
     },
     [reorderSiblings, workspaceId],
   );
@@ -149,6 +152,17 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
     },
     [],
   );
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsCompact(window.scrollY > 56);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  if (!wsHydrated || !nodeHydrated) return <WorkspaceDetailSkeleton />;
 
   if (!workspace) {
     return (
@@ -166,59 +180,86 @@ export function WorkspaceDetailClient({ workspaceId, focusedNodeId }: WorkspaceD
   }
 
   return (
-    <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">{rootNode?.title ?? workspace.name}</h1>
-          {rootNode && (
-            <p className="mt-1 text-sm text-muted-foreground">
-              {workspace.name}
-            </p>
-          )}
-        </div>
+    <div className="mx-auto flex w-full flex-1 flex-col">
+      <div
+        ref={headerRef}
+        className={`sticky top-14 z-20 px-4 sm:px-6 lg:px-8 transition-all duration-200 border-b bg-background ${
+          isCompact
+            ? "py-1.5 sm:py-2"
+            : "pt-8 pb-4"
+        }`}
+      >
+        <div className={`flex items-center justify-between gap-4 ${
+          isCompact ? "flex-row" : "flex-col sm:flex-row flex-wrap items-start"
+        }`}>
+          <div className="min-w-0 flex-1">
+            <h1 className={`font-bold tracking-tight truncate ${
+              isCompact ? "text-sm" : "text-2xl"
+            }`}>
+              {rootNode?.title ?? workspace.name}
+            </h1>
+            {!isCompact && rootNode && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {workspace.name}
+              </p>
+            )}
+          </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
-            <span>{progress}%</span>
-            <Progress value={progress} className="h-1.5 w-16" />
-          </span>
-          <Button
-            size="sm"
-            variant="outline"
-            asChild
-          >
-            <Link href={`/workspaces/${workspaceId}/dashboard`}>
-              <HugeiconsIcon icon={PieChart09Icon} />
-              Dashboard
-            </Link>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setDialog({ type: "create" })}
-          >
-            <HugeiconsIcon icon={Add01Icon} />
-            Add Topic
-          </Button>
-          <Button
-            size="sm"
-            variant={isEditing ? "default" : "outline"}
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            <HugeiconsIcon icon={isEditing ? SaveIcon : Edit02Icon} className="size-3" />
-            {isEditing ? "Save" : "Edit"}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {!isCompact && (
+              <span className="flex items-center gap-2 text-sm text-muted-foreground whitespace-nowrap">
+                <span>{progress}%</span>
+                <Progress value={progress} className="h-1.5 w-16" />
+              </span>
+            )}
+            <Button
+              size={isCompact ? "xs" : "sm"}
+              variant="outline"
+              asChild
+            >
+              <Link href={`/workspaces/${workspaceId}/dashboard`}>
+                <HugeiconsIcon icon={PieChart09Icon} />
+                {isCompact ? (
+                  <span className="sr-only">Dashboard</span>
+                ) : (
+                  "Dashboard"
+                )}
+              </Link>
+            </Button>
+            <Button
+              size={isCompact ? "xs" : "sm"}
+              variant="outline"
+              onClick={() => setDialog({ type: "create" })}
+            >
+              <HugeiconsIcon icon={Add01Icon} />
+              {isCompact ? (
+                <span className="sr-only">Add Topic</span>
+              ) : (
+                "Add Topic"
+              )}
+            </Button>
+            <Button
+              size={isCompact ? "xs" : "sm"}
+              variant={isEditing ? "default" : "outline"}
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              <HugeiconsIcon icon={isEditing ? SaveIcon : Edit02Icon} className="size-3" />
+              {isCompact ? (
+                <span className="sr-only">{isEditing ? "Save" : "Edit"}</span>
+              ) : (
+                isEditing ? "Save" : "Edit"
+              )}
+            </Button>
+            <FilterSortBar
+              filter={filter}
+              onChange={setFilter}
+              compact={isCompact}
+            />
+          </div>
         </div>
       </div>
 
-      <Separator className="my-6" />
-
-      <FilterSortBar
-        filter={filter}
-        onChange={setFilter}
-      />
-
-      <div className="mt-6 flex-1">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 pb-8">
         <SortableTree
           workspaceNodes={displayNodes}
           isEditing={isEditing}

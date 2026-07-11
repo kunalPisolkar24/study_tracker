@@ -17,7 +17,7 @@ import { TreeConfidenceBadge } from "@/components/tree/tree-confidence-badge";
 import { TreeProgressBar } from "@/components/tree/tree-progress-bar";
 import { TreeActionButtons } from "@/components/tree/tree-action-buttons";
 import type { NodeStoreItem } from "@/types/node";
-import type { ItemInstance, TreeInstance } from "@headless-tree/core";
+import type { ItemInstance } from "@headless-tree/core";
 import type { HeadlessItemData } from "@/lib/workspace/tree/tree-adapter";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight02Icon } from "@hugeicons/core-free-icons";

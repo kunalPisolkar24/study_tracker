@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useWorkspaceStore } from "@/stores/workspace-store";
+import { GroupsPageSkeleton } from "@/components/skeletons/groups-page-skeleton";
 import { GroupCard } from "@/components/workspaces/group-card";
 import { GroupFormDialog } from "@/components/workspaces/group-form-dialog";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
@@ -15,6 +16,7 @@ import type { CreateWorkspaceGroupInput } from "@/lib/workspace/workspace-schema
 
 export function GroupsPageClient() {
   const router = useRouter();
+  const hydrated = useWorkspaceStore((s) => s.hydrated);
   const { workspaceGroups, workspaces, addGroup, updateGroup, removeGroup } = useWorkspaceStore();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -30,14 +32,14 @@ export function GroupsPageClient() {
   } | null>(null);
 
   async function handleCreate(input: CreateWorkspaceGroupInput): Promise<boolean> {
-    addGroup(input);
+    await addGroup(input);
     toast.success("Group created successfully");
     return true;
   }
 
   async function handleEdit(input: CreateWorkspaceGroupInput): Promise<boolean> {
     if (!editTarget) return false;
-    updateGroup(editTarget.id, input);
+    await updateGroup(editTarget.id, input);
     setEditTarget(null);
     toast.success("Group updated successfully");
     return true;
@@ -48,9 +50,9 @@ export function GroupsPageClient() {
     if (g) setDeleteTarget({ id: g.id, name: g.name });
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleteTarget) return;
-    removeGroup(deleteTarget.id);
+    await removeGroup(deleteTarget.id);
     setDeleteTarget(null);
     toast.success("Group deleted successfully");
   }
@@ -60,6 +62,8 @@ export function GroupsPageClient() {
   }
 
   const hasGroups = workspaceGroups.length > 0;
+
+  if (!hydrated) return <GroupsPageSkeleton />;
 
   return (
     <div className="mx-auto flex w-full flex-1 flex-col px-4 py-8 sm:px-6 lg:px-8">

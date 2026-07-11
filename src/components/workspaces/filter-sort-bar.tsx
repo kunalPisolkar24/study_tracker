@@ -18,17 +18,18 @@ import type { NodeFilterState } from "@/types/node";
 interface FilterSortBarProps {
   filter: NodeFilterState;
   onChange: (filter: NodeFilterState) => void;
+  compact?: boolean;
 }
 
-export function FilterSortBar({ filter, onChange }: FilterSortBarProps) {
+export function FilterSortBar({ filter, onChange, compact }: FilterSortBarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1.5")}>
+            <button className={cn(buttonVariants({ variant: "outline", size: compact ? "xs" : "sm" }), "gap-1.5")}>
               <HugeiconsIcon icon={FilterIcon} className="size-4" />
-              Filter
+              <span className={compact ? "sr-only" : undefined}>Filter</span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">

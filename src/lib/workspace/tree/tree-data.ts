@@ -7,9 +7,9 @@ import {
   hotkeysCoreFeature,
   dragAndDropFeature,
   keyboardDragAndDropFeature,
-  createOnDropHandler,
   isOrderedDragTarget,
   type ItemInstance,
+  type DragTarget,
 } from "@headless-tree/core";
 import type { NodeStoreItem } from "@/types/node";
 import {
@@ -63,16 +63,82 @@ export function useWorkspaceTree(
       if (isOrderedDragTarget(target)) return true;
       return target.item.isFolder();
     },
-    onDrop: createOnDropHandler(
-      (parentItem: ItemInstance<HeadlessItemData>, newChildrenIds: string[]) => {
+    onDrop: async (
+      items: ItemInstance<HeadlessItemData>[],
+      target: DragTarget<HeadlessItemData>,
+    ) => {
+      const itemIds = items.map((i) => i.getId());
+
+      if (isOrderedDragTarget(target)) {
+        // Same-parent reorder: compute final order in one pass
+        const allChildren = target.item
+          .getChildren()
+          .map((c) => c.getId());
+        const withoutDragged = allChildren.filter(
+          (id) => !itemIds.includes(id),
+        );
+        const newChildren = [
+          ...withoutDragged.slice(0, target.insertionIndex),
+          ...itemIds,
+          ...withoutDragged.slice(target.insertionIndex),
+        ];
         const result = compileReorderResult(
-          parentItem.getId(),
+          target.item.getId(),
           VIRTUAL_ROOT,
-          newChildrenIds,
+          newChildren,
         );
         onReorderRef.current(result.parentId, result.orderedChildIds);
-      },
-    ),
+
+        if ("updateCachedChildrenIds" in target.item) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (target.item as any).updateCachedChildrenIds(newChildren);
+        }
+        tree.rebuildTree();
+      } else {
+        // Into-folder drop: remove from old parents, append to new parent
+        const uniqueParents = [
+          ...new Set(items.map((item) => item.getParent())),
+        ];
+        for (const parent of uniqueParents) {
+          if (!parent) continue;
+          const siblings = parent.getChildren().map((c) => c.getId());
+          const newSiblingIds = siblings.filter(
+            (id) => !itemIds.includes(id),
+          );
+          if (parent.getId() !== target.item.getId()) {
+            const result = compileReorderResult(
+              parent.getId(),
+              VIRTUAL_ROOT,
+              newSiblingIds,
+            );
+            onReorderRef.current(result.parentId, result.orderedChildIds);
+          }
+          if ("updateCachedChildrenIds" in parent) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (parent as any).updateCachedChildrenIds(newSiblingIds);
+          }
+        }
+
+        await target.item
+          .getTree()
+          .waitForItemChildrenLoaded(target.item.getId());
+        const oldChildrenIds = target.item
+          .getTree()
+          .retrieveChildrenIds(target.item.getId());
+        const newChildren = [...oldChildrenIds, ...itemIds];
+        const result = compileReorderResult(
+          target.item.getId(),
+          VIRTUAL_ROOT,
+          newChildren,
+        );
+        onReorderRef.current(result.parentId, result.orderedChildIds);
+        if ("updateCachedChildrenIds" in target.item) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (target.item as any).updateCachedChildrenIds(newChildren);
+        }
+        tree.rebuildTree();
+      }
+    },
     seperateDragHandle: true,
     canDrag: () => true,
     features: [
